@@ -1,0 +1,6 @@
+/* rowStyle.css */
+.rowStyle {
+    display: flex;
+    flex-direction: row;
+  }
+  

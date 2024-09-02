@@ -39,7 +39,7 @@ const DefaultNoteFile: React.FC = () => {
 
   return (
     <div>
-      <h1>Default Note File</h1>
+      <h1>Default Note</h1>
       <p>Check your browser's localStorage for the stored notes.</p>
     </div>
   );

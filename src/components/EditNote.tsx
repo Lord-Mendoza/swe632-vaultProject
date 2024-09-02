@@ -1,4 +1,6 @@
+// EditNotes.tsx
 import React, { useState, useEffect } from "react";
+import "./../styling/centerStyle.css";
 
 const EditNotes: React.FC = () => {
   const noteKey = "notes"; // The key under which the notes array is stored in localStorage
@@ -48,7 +50,7 @@ const EditNotes: React.FC = () => {
 
   return (
     <div>
-      <h1>Edit Notes</h1>
+      <h1 className="centerStyle">Edit Notes</h1>
       <div>
         <label htmlFor="noteSelect">Select Note:</label>
         <select

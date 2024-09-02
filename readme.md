@@ -5,7 +5,9 @@ Preview Website: https://SWE632.shir.one
 
 You can edit the notes and will be saved on the local browser persistent accross refresh. If the default notes are deleted, they will be regenerated on refresh.
 
-Clearing Cookies & Cache will clear all stored notes
+The AI ChatBot is context aware of all notes stored. You can ask questions about content in the stored notes.
+
+**Warning:** Clearing Cookies & Cache will clear all stored notes
 
 # To run/build:
 

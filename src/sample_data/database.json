@@ -1,0 +1,32 @@
+{
+  "entries": {
+    "entryOne": {
+      "insertDate": "2024-09-02",
+      "title": "First Entry",
+      "sections": [
+        {
+          "sectionTitle": "Description",
+          "content": "first entry"
+        },
+        {
+          "sectionTitle": "Sample Code",
+          "content": "public static void main(String[] args){}"
+        }
+      ]
+    },
+    "entryTwo": {
+      "insertDate": "2024-09-02",
+      "title": "Second Entry",
+      "sections": [
+        {
+          "sectionTitle": "Description",
+          "content": "second entry"
+        },
+        {
+          "sectionTitle": "Sample Code",
+          "content": "public static void main(String[] args){}"
+        }
+      ]
+    }
+  }
+}

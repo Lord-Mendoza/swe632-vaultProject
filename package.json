@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "antd": "^5.20.4",
     "aos": "^2.3.4",
     "bootstrap": "^5.3.3",
     "prismjs": "^1.29.0",

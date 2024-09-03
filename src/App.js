@@ -11,7 +11,7 @@ class App extends Component {
         }
     }
 
-    static getDerivedStateFromProps(error) {
+    static getDerivedStateFromError(error) {
         console.log(error);
         return {hasError: true};
     }

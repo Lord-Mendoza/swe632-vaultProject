@@ -1,0 +1,106 @@
+.col-9 {
+    text-align: left;
+}
+
+.col-3, .col-9 {
+    padding: .25em 0;
+}
+
+.darkMode code.property {
+    background: rgb(21, 21, 21);
+}
+
+code.property {
+    background: #EDEDED;
+    color: unset;
+    padding: 0.25rem 0.5rem;
+    margin: 0 .25em;
+    border-radius: 0.25rem;
+}
+
+li {
+    padding: .25em 0;
+}
+
+.menuAndContentComponent .codeSample {
+    width: 100%;
+    padding-right: 1em;
+    margin: unset;
+}
+
+.notes {
+    font-weight: bold;
+    color: #0D8CFF;
+}
+
+.darkMode .notes {
+    color: lightblue;
+}
+
+.menuAndContentCarousel {
+    max-width: min-content;
+}
+
+.ui.block.inverted.header {
+    border: 0;
+}
+
+.ui.vertical.menu .active.item {
+    background-color: rgba(0,0,0,.1) !important;
+}
+
+.darkMode .ui.vertical.menu .active.item {
+    background-color: rgba(0, 0, 0, .5) !important;
+}
+
+a.carousel-control-prev:hover, a.carousel-control-next:hover {
+    background-color: lightgray;
+    filter: invert(1) grayscale(100);
+}
+
+/*Sidebar and content body*/
+.ui.segment.pushable.sidebarBody {
+    background-color: unset !important;
+    margin: 0;
+}
+
+.menuAndContentComponent.desktop .ui.segment.pushable.sidebarBody {
+    overflow: unset !important;
+    margin-bottom: 10px;
+}
+
+/*Side bar*/
+.menuAndContentComponent.desktop .sidebar.menu {
+    margin-top: 10px !important;
+    margin-left: 15px !important;
+    height: --screen-height !important;
+    max-height: --screen-height !important;
+    overflow-y: auto;
+}
+
+/*Content*/
+.pusher.sidebarContent {
+    overflow: scroll;
+    margin: 10px 15px 10px 40px;
+    width: 90vw;
+}
+
+.menuAndContentComponent.desktop .pusher.sidebarContent {
+    padding-right: 13%;
+}
+
+/*Toggle button for showing sidebar menu*/
+button.ui.icon.button.sideMenuToggleBtn {
+    position: absolute;
+    top: 10px;
+    left: 0;
+    height: 10vh;
+    width: 35px;
+    z-index: 1000;
+}
+
+/*Mobile*/
+
+.menuAndContentComponent:not(.desktop) .push.left.visible.sidebar.menu {
+    overflow-y: visible !important;
+}

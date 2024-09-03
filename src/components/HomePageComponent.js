@@ -91,15 +91,35 @@ class HomePageComponent extends React.Component {
 
         let menuOptions = [];
         if (database.hasOwnProperty("entries") && isNotAnEmptyObject(database["entries"])) {
-            Object.keys(database["entries"]).forEach(entry => {
-                let item = database["entries"][entry];
+            Object.keys(database["entries"])
+                .sort((a, b) => {
+                    a = database["entries"][a]
+                    b = database["entries"][b]
 
-                menuOptions.push(<Menu.Item name={entry}
-                                            active={activeKey === entry}
-                                            onClick={this.changeActiveKey}>
-                    <Menu.Header>{item["title"]}</Menu.Header>
-                </Menu.Item>);
-            })
+                    if ((a["insertDate"] === null && b["insertDate"] === null) || (a["insertDate"] === undefined && b["insertDate"] === undefined))
+                        return 1;
+                    else if (a["insertDate"] === null || a === undefined)
+                        return -1;
+                    else if (b["insertDate"] === null || b["insertDate"] === undefined)
+                        return 1;
+                    else {
+                        const dateA = Date.parse(a["insertDate"])
+                        const dateB = Date.parse(b["insertDate"])
+
+                        if (dateA === dateB)
+                            return 0;
+                        return (dateA < dateB) ? 1 : -1;
+                    }
+                })
+                .forEach(entry => {
+                    let item = database["entries"][entry];
+
+                    menuOptions.push(<Menu.Item name={entry}
+                                                active={activeKey === entry}
+                                                onClick={this.changeActiveKey}>
+                        <Menu.Header>{item["title"]}</Menu.Header>
+                    </Menu.Item>);
+                })
         }
 
         let content;

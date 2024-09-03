@@ -13,4 +13,11 @@
   color: white;
 }
 
-
+div.center-screen {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: 50vw;
+}

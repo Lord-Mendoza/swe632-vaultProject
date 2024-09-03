@@ -22,7 +22,7 @@ li {
     padding: .25em 0;
 }
 
-.menuAndContentComponent .codeSample {
+.homePageComponent .codeSample {
     width: 100%;
     padding-right: 1em;
     margin: unset;
@@ -35,10 +35,6 @@ li {
 
 .darkMode .notes {
     color: lightblue;
-}
-
-.menuAndContentCarousel {
-    max-width: min-content;
 }
 
 .ui.block.inverted.header {
@@ -62,15 +58,16 @@ a.carousel-control-prev:hover, a.carousel-control-next:hover {
 .ui.segment.pushable.sidebarBody {
     background-color: unset !important;
     margin: 0;
+    border: 0;
 }
 
-.menuAndContentComponent.desktop .ui.segment.pushable.sidebarBody {
+.homePageComponent.desktop .ui.segment.pushable.sidebarBody {
     overflow: unset !important;
     margin-bottom: 10px;
 }
 
 /*Side bar*/
-.menuAndContentComponent.desktop .sidebar.menu {
+.homePageComponent.desktop .sidebar.menu {
     margin-top: 10px !important;
     margin-left: 15px !important;
     height: --screen-height !important;
@@ -85,7 +82,7 @@ a.carousel-control-prev:hover, a.carousel-control-next:hover {
     width: 90vw;
 }
 
-.menuAndContentComponent.desktop .pusher.sidebarContent {
+.homePageComponent.desktop .pusher.sidebarContent {
     padding-right: 13%;
 }
 
@@ -101,6 +98,6 @@ button.ui.icon.button.sideMenuToggleBtn {
 
 /*Mobile*/
 
-.menuAndContentComponent:not(.desktop) .push.left.visible.sidebar.menu {
+.homePageComponent:not(.desktop) .push.left.visible.sidebar.menu {
     overflow-y: visible !important;
 }

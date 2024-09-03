@@ -9,6 +9,7 @@ import ScrollToTop from "react-scroll-to-top";
 import React from "react";
 import {isNotAnEmptyObject, isNotNullNorUndefined} from "../utilities/helpers/ObjectVariableFunctions";
 import {isNotAnEmptyArray} from "../utilities/helpers/ArrayVariableValidators";
+import '../styling/HomePageComponent.css';
 import '../styling/ComponentStyling.css';
 import database from "../sample_data/database.json"
 
@@ -23,7 +24,7 @@ class HomePageComponent extends React.Component {
 
         this.state = {
             darkMode,
-            activeKey: "entryOne",
+            activeKey: "",
             copySuccess: "",
             showSidebar: true
         };
@@ -133,9 +134,16 @@ class HomePageComponent extends React.Component {
 
                 {entryContents && <Row noGutters>{entryContents}</Row>}
             </Segment>
+        } else {
+            content = <Segment raised inverted={darkMode} style={{marginTop: '10px'}}>
+                <div className="center-screen">
+                    <h2>Select one of your entries to the left to start viewing its information here.</h2>
+                </div>
+            </Segment>
         }
 
-        return (<div>
+        return (
+            <div>
                 <Navbar sticky="top" collapseOnSelect expand="lg" bg="dark" variant="dark" style={{padding: "10px"}}>
                     <Navbar.Brand>
                         <img src={"logo.png"} style={{height: '24px', width: '24px', marginRight: "5px"}}
@@ -151,6 +159,7 @@ class HomePageComponent extends React.Component {
                                     File</NavDropdown.Item>
                             </NavDropdown>
                         </Nav>
+
                         <div style={{padding: ".5rem 1rem"}}>
                             <span className={"darkModeLabel"}> Dark Mode: &nbsp;</span>
                             <Switch
@@ -165,8 +174,9 @@ class HomePageComponent extends React.Component {
                     </Navbar.Collapse>
                 </Navbar>
 
-                <div style={{paddingBottom: "15px", ...style}} className={darkMode === true ? "darkMode" : ""}>
-                    <div className={"menuAndContentComponent " + sidebarClassName}>
+                <div style={{marginTop: '-10px', paddingBottom: "15px", ...style}}
+                     className={darkMode === true ? "darkMode" : ""}>
+                    <div style={{margin: 0}} className={"homePageComponent " + sidebarClassName}>
                         <Sidebar.Pushable as={Segment} className={'sidebarBody'}>
                             {sidebarButton}
 

@@ -20,7 +20,9 @@ class App extends Component {
         const {hasError} = this.state;
 
         if (hasError) {
-            return (<h1>Whoops! Something went wrong. Please close the window and try again.</h1>);
+            return (<div className="center-screen">
+                <h1>Whoops! Something went wrong. Please close the window and try again.</h1>
+            </div>);
         } else {
             return (<HomePageComponent/>);
         }

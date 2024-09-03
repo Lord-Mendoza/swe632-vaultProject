@@ -10,7 +10,8 @@
         },
         {
           "sectionTitle": "Sample Code",
-          "content": "public static void main(String[] args){}"
+          "content": "public static void main(String[] args){}",
+          "isCode": true
         }
       ]
     },
@@ -24,7 +25,8 @@
         },
         {
           "sectionTitle": "Sample Code",
-          "content": "public static void main(String[] args){}"
+          "content": "public static void main(String[] args){}",
+          "isCode": true
         }
       ]
     }

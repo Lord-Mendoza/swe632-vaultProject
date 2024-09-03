@@ -114,17 +114,29 @@ class HomePageComponent extends React.Component {
 
             if (isNotAnEmptyArray(sections)) {
                 Object.values(sections).forEach(section => {
-                    const {sectionTitle, content} = section;
-                    entryContents.push([<Col xs={3}>{sectionTitle}</Col>, <Col xs={9}>{content}</Col>])
+                    const {sectionTitle, content, isCode} = section;
+
+                    let renderedContent = isCode ? <section className={"codeSample"}>
+                            <pre className="language-javascript">
+                                <code>
+                                    {content}
+                                </code>
+                            </pre>
+                    </section> : content;
+
+                    entryContents.push(
+                        <Row noGutters style={{paddingBottom: '.5em', paddingLeft: "2em"}}>
+                            <Col xs={1}>{sectionTitle}</Col>
+                            <Col xs={11}>{renderedContent}</Col>
+                        </Row>
+                    )
                 })
             }
 
-            content = <Segment raised inverted={darkMode}>
+            content = <Segment raised inverted={darkMode} style={{marginTop: '10px'}}>
                 {isNotNullNorUndefined(title) &&
                     <Row noGutters style={{paddingBottom: '.5em', paddingLeft: "1em"}}>
-                        <h4>
-                            <code className="property">{title}</code>
-                        </h4>
+                        <h4>{title}</h4>
                     </Row>}
 
                 {isNotNullNorUndefined(insertDate) &&
@@ -132,7 +144,7 @@ class HomePageComponent extends React.Component {
                         <h6>Added: {insertDate}</h6>
                     </Row>}
 
-                {entryContents && <Row noGutters>{entryContents}</Row>}
+                {entryContents}
             </Segment>
         } else {
             content = <Segment raised inverted={darkMode} style={{marginTop: '10px'}}>
@@ -158,6 +170,8 @@ class HomePageComponent extends React.Component {
                                 <NavDropdown.Item onClick={this.handleSelection}>Restore Vault from
                                     File</NavDropdown.Item>
                             </NavDropdown>
+
+                            <Nav.Link onClick={() => alert("clicked")}>Create New Entry</Nav.Link>
                         </Nav>
 
                         <div style={{padding: ".5rem 1rem"}}>

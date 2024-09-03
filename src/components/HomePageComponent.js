@@ -136,7 +136,7 @@ class HomePageComponent extends React.Component {
         }
 
         return (<div>
-                <Navbar sticky="top" collapseOnSelect expand="lg" bg="dark" variant="dark" style={{}}>
+                <Navbar sticky="top" collapseOnSelect expand="lg" bg="dark" variant="dark" style={{padding: "10px"}}>
                     <Navbar.Brand>
                         <img src={"logo.png"} style={{height: '24px', width: '24px', marginRight: "5px"}}
                              alt={'vault logo'}/>

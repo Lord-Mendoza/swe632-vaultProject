@@ -15,6 +15,21 @@
         }
       ]
     },
+    "GroupMembers": {
+      "insertDate": "2024-09-04",
+      "title": "Group Members",
+      "sections": [
+        {
+          "sectionTitle": "Description",
+          "content": "Group Members"
+        },
+        {
+          "sectionTitle": "Sample Code",
+          "content": "Andy Tran\nLord Mendoza\nTrent Zakielarz",
+          "isCode": false
+        }
+      ]
+    },
     "entryTwo": {
       "insertDate": "2024-08-01",
       "title": "Second Entry",

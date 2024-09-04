@@ -1,24 +1,39 @@
-/* AIChatBot.css */
-.centered-heading {
-    text-align: center;
-  }
-  
-  .container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
-  
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-  
-  label {
-    margin-bottom: 8px;
-  }
-  
+.chatbot-container {
+  position: fixed;
+  bottom: 70px;
+  right: 20px;
+  width: 300px;
+  max-height: 70vh; /* Set a maximum height to avoid overflow */
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; /* Enable scrolling if content exceeds max height */
+  transition: height 0.3s ease-in-out; /* Smooth transition for height change */
+}
+
+.response-container {
+  flex-grow: 1;
+  margin: 10px;
+  overflow-y: auto;
+  word-wrap: break-word; /* Ensure long text wraps within the container */
+}
+
+.chatbot-container h1 {
+  text-align: center;
+  font-size: 18px;
+  margin-top: 10px;
+}
+
+.chatbot-container textarea {
+  width: 90%;
+  margin: 10px auto;
+}
+
+.chatbot-container button {
+  margin: 10px;
+  align-self: center;
+}

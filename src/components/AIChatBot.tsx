@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import database from "../sample_data/database.json";
 import "./../styling/centerStyle.css";
 import "./../styling/AiChatBot.css";
@@ -17,7 +17,7 @@ const AIChatBot: React.FC = () => {
     };
 
     fetchEntries();
-  }, []);
+  }, [response]);
 
   // Function to handle user question and get response from LLM
   const handleAskQuestion = async () => {
@@ -36,7 +36,7 @@ const AIChatBot: React.FC = () => {
       })
       .join("\n\n");
 
-    const prompt = `Here are the notes:\n${notesContent}\n\nUser Question: ${question}\n\n Keep responses, short, do not include extra information`;
+    const prompt = `Here are the notes:\n${notesContent}\n\nUser Question: ${question}\n\nKeep responses, short, do not include extra information\n`;
 
     try {
       const responseStream = await fetch(
@@ -105,7 +105,7 @@ const AIChatBot: React.FC = () => {
       <button onClick={handleAskQuestion} disabled={loading}>
         {loading ? "Loading..." : "Ask Question"}
       </button>
-      <div>
+      <div className="response-container">
         <h2>Response:</h2>
         <p>{response}</p>
       </div>

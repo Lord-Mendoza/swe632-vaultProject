@@ -36,7 +36,7 @@ const AIChatBot: React.FC = () => {
       })
       .join("\n\n");
 
-    const prompt = `Here are the notes:\n${notesContent}\n\nUser Question: ${question}`;
+    const prompt = `Here are the notes:\n${notesContent}\n\nUser Question: ${question}\n\n Keep responses, short, do not include extra information`;
 
     try {
       const responseStream = await fetch(

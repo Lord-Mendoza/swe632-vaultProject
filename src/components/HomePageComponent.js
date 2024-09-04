@@ -7,11 +7,12 @@ import "../styling/prism.css"
 import {Switch} from "antd";
 import ScrollToTop from "react-scroll-to-top";
 import React from "react";
-import {isNotAnEmptyObject, isNotNullNorUndefined} from "../utilities/helpers/ObjectVariableFunctions";
-import {isNotAnEmptyArray} from "../utilities/helpers/ArrayVariableValidators";
+import {copyObject, isNotAnEmptyObject, isNotNullNorUndefined} from "../utilities/helpers/ObjectVariableFunctions";
+import {copyArrayOfObjects, isNotAnEmptyArray} from "../utilities/helpers/ArrayVariableValidators";
 import '../styling/HomePageComponent.css';
 import '../styling/ComponentStyling.css';
-import database from "../sample_data/database.json"
+import EntryComponent from "./EntryComponent";
+import {ConstantStrings} from "../utilities/constants/ConstantStrings";
 
 class HomePageComponent extends React.Component {
 
@@ -23,13 +24,53 @@ class HomePageComponent extends React.Component {
             darkMode = true;
 
         this.state = {
+            //TODO: Clear the dummy data and set entries to empty object
+            // entries: {},
+            entries: {
+                "entryOne": {
+                    "insertDate": "2024-09-02",
+                    "title": "First Entry",
+                    "sections": [
+                        {
+                            "sectionTitle": "Description",
+                            "content": "first entry"
+                        },
+                        {
+                            "sectionTitle": "Sample Code",
+                            "content": "public static void main(String[] args){}",
+                            "isCode": true
+                        }
+                    ]
+                },
+                "entryTwo": {
+                    "insertDate": "2024-08-01",
+                    "title": "Second Entry",
+                    "sections": [
+                        {
+                            "sectionTitle": "Description",
+                            "content": "second entry"
+                        },
+                        {
+                            "sectionTitle": "Sample Code",
+                            "content": "public static void main(String[] args){}",
+                            "isCode": true
+                        }
+                    ]
+                }
+            },
+
             darkMode,
             activeKey: "",
             copySuccess: "",
-            showSidebar: true
+            showSidebar: true,
+
+            showCreateEditEntryPopup: false,
+            entryType: "",
+            entry: {}
         };
 
         this.handleSelection = this.handleSelection.bind(this);
+        this.changeEntries = this.changeEntries.bind(this);
         this.copyToClipboard = this.copyToClipboard.bind(this);
         this.setDarkModeToLocalStorage = this.setDarkModeToLocalStorage.bind(this);
         this.changeActiveKey = (e, {name}) => this.setState({activeKey: name});
@@ -39,6 +80,8 @@ class HomePageComponent extends React.Component {
             else
                 this.setState({showSidebar: !this.state.showSidebar});
         }
+        this.showCreateEditEntryPopup = entryType => this.setState({showCreateEditEntryPopup: true, entryType})
+        this.closeCreateEditEntryPopup = () => this.setState({showCreateEditEntryPopup: false, entryType: ""})
     }
 
     componentDidMount() {
@@ -65,8 +108,40 @@ class HomePageComponent extends React.Component {
         localStorage.setItem('isDarkMode', darkMode === true ? "true" : "false");
     }
 
+    changeEntries(entry){
+        const {entries} = this.state;
+        let newEntries = copyObject(entries);
+
+        let refactoredEntry = {};
+        refactoredEntry["title"] = entry["title"];
+
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        refactoredEntry["insertDate"] = `${year}-${month}-${day}`;
+
+        refactoredEntry["sections"] = [];
+        Object.keys(entry)
+            .filter(v => v !== "title")
+            .forEach(section => {
+            refactoredEntry["sections"].push({
+                "sectionTitle": section,
+                "content": entry[section]
+            })
+        })
+
+        newEntries[entry["title"]] = refactoredEntry;
+
+        this.setState({entries: newEntries}, this.closeCreateEditEntryPopup);
+    };
+
     render() {
-        const {activeKey, darkMode, showSidebar} = this.state;
+        const {
+            entries,
+            activeKey, darkMode, showSidebar,
+            showCreateEditEntryPopup, entry, entryType
+        } = this.state;
 
         AOS.init();
 
@@ -90,11 +165,11 @@ class HomePageComponent extends React.Component {
         }
 
         let menuOptions = [];
-        if (database.hasOwnProperty("entries") && isNotAnEmptyObject(database["entries"])) {
-            Object.keys(database["entries"])
+        if (isNotAnEmptyObject(entries)) {
+            Object.keys(entries)
                 .sort((a, b) => {
-                    a = database["entries"][a]
-                    b = database["entries"][b]
+                    a = entries[a]
+                    b = entries[b]
 
                     if ((a["insertDate"] === null && b["insertDate"] === null) || (a["insertDate"] === undefined && b["insertDate"] === undefined))
                         return 1;
@@ -112,7 +187,7 @@ class HomePageComponent extends React.Component {
                     }
                 })
                 .forEach(entry => {
-                    let item = database["entries"][entry];
+                    let item = entries[entry];
 
                     menuOptions.push(<Menu.Item name={entry}
                                                 active={activeKey === entry}
@@ -123,12 +198,10 @@ class HomePageComponent extends React.Component {
         }
 
         let content;
-        if (isNotAnEmptyObject(database)
-            && database.hasOwnProperty("entries")
-            && database["entries"].hasOwnProperty(activeKey)
-            && isNotAnEmptyObject(database["entries"][activeKey])) {
+        if (entries.hasOwnProperty(activeKey)
+            && isNotAnEmptyObject(entries[activeKey])) {
 
-            let {title, insertDate, sections} = database["entries"][activeKey];
+            let {title, insertDate, sections} = entries[activeKey];
 
             let entryContents = [];
 
@@ -191,7 +264,8 @@ class HomePageComponent extends React.Component {
                                     File</NavDropdown.Item>
                             </NavDropdown>
 
-                            <Nav.Link onClick={() => alert("clicked")}>Create New Entry</Nav.Link>
+                            <Nav.Link onClick={() => this.showCreateEditEntryPopup(ConstantStrings.createStr)}>Create
+                                New Entry</Nav.Link>
                         </Nav>
 
                         <div style={{padding: ".5rem 1rem"}}>
@@ -235,6 +309,11 @@ class HomePageComponent extends React.Component {
                         </Sidebar.Pushable>
                     </div>
                 </div>
+
+                {showCreateEditEntryPopup && <EntryComponent entry={entry}
+                                                             changeEntries={this.changeEntries}
+                                                             entryType={entryType}
+                                                             closePopup={this.closeCreateEditEntryPopup}/>}
 
                 <ScrollToTop smooth/>
             </div>

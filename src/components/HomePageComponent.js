@@ -12,6 +12,7 @@ import {isNotAnEmptyArray} from "../utilities/helpers/ArrayVariableValidators";
 import '../styling/HomePageComponent.css';
 import '../styling/ComponentStyling.css';
 import database from "../sample_data/database.json"
+import AIChatBot from "./AIChatBot.tsx"
 
 class HomePageComponent extends React.Component {
 
@@ -235,6 +236,8 @@ class HomePageComponent extends React.Component {
                         </Sidebar.Pushable>
                     </div>
                 </div>
+      {/* Add AIChatBot here */}
+      <AIChatBot/>
 
                 <ScrollToTop smooth/>
             </div>

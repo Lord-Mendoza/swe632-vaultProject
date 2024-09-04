@@ -1,25 +1,20 @@
 import React, { useState, useEffect } from "react";
-import "../styling/centerStyle.css";
-import "../styling/AiChatBot.css";
 import database from "../sample_data/database.json";
 
 const AIChatBot: React.FC = () => {
-  const [notes, setNotes] = useState<any[]>([]);
+  const [entries, setEntries] = useState<any[]>([]);
   const [question, setQuestion] = useState<string>("");
   const [response, setResponse] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
+  // Load entries from the imported database
   useEffect(() => {
-    const fetchNotes = async () => {
-      if (database) {
-        setNotes(Object.values(database.entries));
-      } else {
-        // If the database is not available, you can use an empty array
-        setNotes([]);
-      }
+    const fetchEntries = () => {
+      const dbEntries = Object.values(database.entries);
+      setEntries(dbEntries);
     };
 
-    fetchNotes();
+    fetchEntries();
   }, []);
 
   // Function to handle user question and get response from LLM
@@ -30,9 +25,15 @@ const AIChatBot: React.FC = () => {
     setResponse(""); // Clear previous response
 
     // Prepare the prompt for the LLM
-    const notesContent = notes
-      .map((note: any) => `${note.title}: ${note.content}`)
-      .join("\n");
+    const notesContent = entries
+      .map((entry: any) => {
+        const sections = entry.sections
+          .map((section: any) => `${section.sectionTitle}: ${section.content}`)
+          .join("\n");
+        return `${entry.title} (${entry.insertDate}):\n${sections}`;
+      })
+      .join("\n\n");
+
     const prompt = `Here are the notes:\n${notesContent}\n\nUser Question: ${question}`;
 
     try {
@@ -87,9 +88,9 @@ const AIChatBot: React.FC = () => {
   };
 
   return (
-    <div className="container">
-      <h1 className="centered-heading">AI ChatBot</h1>
-      <div className="form-group">
+    <div>
+      <h1>AI ChatBot</h1>
+      <div>
         <label htmlFor="question">Ask a question about your notes:</label>
         <textarea
           id="question"

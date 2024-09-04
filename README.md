@@ -2,7 +2,10 @@
 
 # Usage
 
-Preview Website: https://lord-mendoza.github.io/swe632-vaultProject/
+There are example notes populated by default
+
+Live Preview of dev: https://vault.shir.one
+Preview of Deployed Site: https://lord-mendoza.github.io/swe632-vaultProject/
 
 The AI ChatBot is context aware of all notes stored. You can ask questions about content in the stored notes.
 
@@ -16,7 +19,7 @@ Clone the repository
 
 do `npm install` in root to install dependencies
 
-## Update Instructions Here
+run with `npm start`
 
 # Docs
 

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import database from "../sample_data/database.json";
+import "./../styling/centerStyle.css";
+import "./../styling/AiChatBot.css";
 
 const AIChatBot: React.FC = () => {
   const [entries, setEntries] = useState<any[]>([]);
@@ -88,9 +90,9 @@ const AIChatBot: React.FC = () => {
   };
 
   return (
-    <div>
-      <h1>AI ChatBot</h1>
-      <div>
+    <div className="container">
+      <h1 className="centered-heading">AI ChatBot</h1>
+      <div className="form-group">
         <label htmlFor="question">Ask a question about your notes:</label>
         <textarea
           id="question"

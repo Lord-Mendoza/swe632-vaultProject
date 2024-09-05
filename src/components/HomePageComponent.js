@@ -199,6 +199,7 @@ class HomePageComponent extends React.Component {
         }
 
         let content;
+        // If activeKey has selected a valid entry
         if (entries.hasOwnProperty(activeKey)
             && isNotAnEmptyObject(entries[activeKey])) {
 
@@ -240,7 +241,9 @@ class HomePageComponent extends React.Component {
 
                 {entryContents}
             </Segment>
-        } else {
+        } 
+        //else, show default selection screen
+        else {
             content = <Segment raised inverted={darkMode} style={{marginTop: '10px'}}>
                 <div className="center-screen">
                     <h2>Select one of your entries to the left to start viewing its information here.</h2>

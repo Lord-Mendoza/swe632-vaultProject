@@ -193,6 +193,7 @@ class HomePageComponent extends React.Component {
                                                 active={activeKey === entry}
                                                 onClick={this.changeActiveKey}>
                         <Menu.Header>{item["title"]}</Menu.Header>
+                        <p1>{item["insertDate"]}</p1>
                     </Menu.Item>);
                 })
         }

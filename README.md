@@ -2,11 +2,9 @@
 
 # Usage
 
+Demo: https://myvault.wiki
+
 There are example notes populated by default
-
-Live Preview of dev: https://vault.shir.one
-
-Preview of Deployed Site: https://lord-mendoza.github.io/swe632-vaultProject/
 
 **Warning:** Refreshing the page will clear all stored notes
 

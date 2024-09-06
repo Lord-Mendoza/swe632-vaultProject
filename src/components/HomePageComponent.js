@@ -3,7 +3,7 @@ import { Button, Icon, Menu, Segment, Sidebar } from "semantic-ui-react";
 import "aos/dist/aos.css";
 import AOS from "aos";
 import Prism from "prismjs";
-import "../styling/prism.css"
+import "../styling/prism.css";
 import { Switch } from "antd";
 import ScrollToTop from "react-scroll-to-top";
 import React from "react";
@@ -13,7 +13,7 @@ import "../styling/HomePageComponent.css";
 import "../styling/ComponentStyling.css";
 import EntryComponent from "./EntryComponent";
 import { ConstantStrings } from "../utilities/constants/ConstantStrings";
-
+// test comment
 class HomePageComponent extends React.Component {
 
     constructor(props) {
@@ -64,9 +64,13 @@ class HomePageComponent extends React.Component {
             copySuccess: "",
             showSidebar: true,
 
+
+
             showCreateEditEntryPopup: false,
             entryType: "",
-            entry: {}
+            entry: {},
+
+            isEditing: false
         };
 
         this.handleSelection = this.handleSelection.bind(this);
@@ -136,11 +140,47 @@ class HomePageComponent extends React.Component {
         this.setState({ entries: newEntries }, this.closeCreateEditEntryPopup);
     };
 
+    // Andy"s Implementation for Edit
+    handleContentChange = (sectionIndex, value) => {
+        const { activeKey, entries } = this.state;
+        const updatedSections = entries[activeKey].sections.map((section, index) => {
+            if (index === sectionIndex) {
+                return { ...section, content: value };
+            }
+            return section;
+        });
+
+        this.setState({
+            entries: {
+                ...entries,
+                [activeKey]: {
+                    ...entries[activeKey],
+                    sections: updatedSections
+                }
+            }
+        });
+    };
+
+    handleTitleChange = (value) => {
+        const { activeKey, entries } = this.state;
+
+        this.setState({
+            entries: {
+                ...entries,
+                [activeKey]: {
+                    ...entries[activeKey],
+                    title: value
+                }
+            }
+        });
+    };
+
+
     render() {
         const {
             entries,
             activeKey, darkMode, showSidebar,
-            showCreateEditEntryPopup, entry, entryType
+            showCreateEditEntryPopup, entry, entryType, isEditing
         } = this.state;
 
         AOS.init();
@@ -163,7 +203,7 @@ class HomePageComponent extends React.Component {
             sidebarAnimation = "slide along"
             sidebarClassName = "desktop";
         }
-
+        // populates side menu
         let menuOptions = [];
         if (isNotAnEmptyObject(entries)) {
             Object.keys(entries)
@@ -207,40 +247,98 @@ class HomePageComponent extends React.Component {
 
             let entryContents = [];
 
+            // If there is data, Build Content to show in view
             if (isNotAnEmptyArray(sections)) {
-                Object.values(sections).forEach(section => {
+                // Break down each section into individual const SectionTitle, content, isCode
+                // Note, this code treats each section individually.
+                // IDK how index is working here
+                entryContents = sections.map((section, index) => {
                     const { sectionTitle, content, isCode } = section;
 
-                    let renderedContent = isCode ? <section className={"codeSample"}>
-                        <pre className="language-javascript">
-                            <code>
-                                {content}
-                            </code>
-                        </pre>
-                    </section> : content;
+                    // if a section isCode, just display
+                    //if !isCode, then display a text area
 
-                    entryContents.push(
-                        <Row noGutters style={{ paddingBottom: ".5em", paddingLeft: "2em" }}>
+
+                    let renderedContent = isCode ? (
+                        <section className={"codeSample"}>
+                            <pre className="language-javascript">
+                                <code>
+                                    {content}
+                                </code>
+                            </pre>
+                        </section>
+                    ) : (
+
+                        // this segment styling is not applying?
+                        <Segment raised inverted={darkMode}>
+                            {/* Can be `textarea` or `input`, which is better? */}
+                            <input
+                                value={content}
+                                // Change handler for text areas???
+                                // updates when user types
+                                onChange={(e) => this.handleContentChange(index, e.target.value)}
+                                // Disable editing when not in editing mode
+                                disabled={!isEditing}
+                                style={{ width: "100%", minHeight: "100px" }}
+                            />
+                        </Segment>
+                    );
+
+
+
+                    // Display to screen, should this be here? I see another return() below
+                    return (
+                        <Row noGutters style={{ paddingBottom: ".5em", paddingLeft: "2em" }} key={index}>
                             <Col xs={1}>{sectionTitle}</Col>
                             <Col xs={11}>{renderedContent}</Col>
                         </Row>
-                    )
-                })
+                    );
+                });
             }
 
-            content = <Segment raised inverted={darkMode} style={{ marginTop: "10px" }}>
-                {isNotNullNorUndefined(title) &&
+            // why is content defined here, shouldn"t it be defined before it is used in line 263?
+            content = (
+                <Segment raised inverted={darkMode} style={{ marginTop: "10px" }}>
                     <Row noGutters style={{ paddingBottom: ".5em", paddingLeft: "1em" }}>
-                        <h4>{title}</h4>
-                    </Row>}
+                        {/* is isEditing is true, the title becomes a editable text field */}
+                        {isEditing ? (
+                            <input
+                                type="text"
+                                value={title}
+                                // Change handler for text areas???
+                                // updates when user types
+                                onChange={(e) => this.handleTitleChange(e.target.value)}
+                                style={{ width: "100%" }}
+                            />
+                        ) : (
+                            // otherwise, just shows the title
+                            <h4>{title}</h4>
+                        )}
+                    </Row>
+                    {/* Shows Date on view*/}
+                    {isNotNullNorUndefined(insertDate) && (
+                        <Row noGutters style={{ paddingBottom: ".5em", paddingLeft: "1em" }}>
+                            <h6>Added: {insertDate}</h6>
+                        </Row>
+                    )}
+                    {/* Show contents of all Sections */}
+                    {entryContents}
 
-                {isNotNullNorUndefined(insertDate) &&
-                    <Row noGutters style={{ paddingBottom: ".5em", paddingLeft: "1em" }}>
-                        <h6>Added: {insertDate}</h6>
-                    </Row>}
+                    {/* if not editing, show an edit button */}
+                    {!isEditing && (
+                        <Button onClick={() => this.setState({ isEditing: true })}>
+                            Edit
+                        </Button>
+                    )}
+                    {/* if editing, show a save button */}
+                    {isEditing && (
+                        <Button onClick={() => this.setState({ isEditing: false })}>
+                            Save
+                        </Button>
+                    )}
 
-                {entryContents}
-            </Segment>
+                </Segment>
+            );
         }
         //else, show default selection screen
         else {

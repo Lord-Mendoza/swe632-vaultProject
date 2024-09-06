@@ -13,7 +13,7 @@ import "../styling/HomePageComponent.css";
 import "../styling/ComponentStyling.css";
 import EntryComponent from "./EntryComponent";
 import { ConstantStrings } from "../utilities/constants/ConstantStrings";
-import AIChatBot from "AIChatBot.tsx";
+import AIChatBot from "./AIChatBot.tsx";
 
 class HomePageComponent extends React.Component {
 
@@ -418,7 +418,7 @@ class HomePageComponent extends React.Component {
           entryType={entryType}
           closePopup={this.closeCreateEditEntryPopup} />}
 
-        <ScrollToTop smooth />
+
         {/* ChatBot Button */}
         <button className="chatbot-toggle-button" onClick={this.toggleChatBot}>
           Chat
@@ -430,6 +430,11 @@ class HomePageComponent extends React.Component {
             <AIChatBot />
           </div>
         )}
+
+
+
+        <ScrollToTop smooth />
+
       </div>
     )
   }

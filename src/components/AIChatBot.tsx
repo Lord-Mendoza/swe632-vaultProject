@@ -1,8 +1,7 @@
+//to master
 import React, { useState, useRef, useEffect } from "react";
-import database from "../sample_data/database.json";
 import "./../styling/centerStyle.css";
 import "./../styling/AiChatBot.css";
-//temp comment
 
 const AIChatBot: React.FC = () => {
   const [entries, setEntries] = useState<any[]>([]);

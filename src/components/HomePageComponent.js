@@ -14,6 +14,7 @@ import "../styling/ComponentStyling.css";
 import EntryComponent from "./EntryComponent";
 import { ConstantStrings } from "../utilities/constants/ConstantStrings";
 import AIChatBot from "./AIChatBot.tsx";
+import "../styling/BotToggle.css"
 
 class HomePageComponent extends React.Component {
 
@@ -71,7 +72,8 @@ class HomePageComponent extends React.Component {
       entryType: "",
       entry: {},
 
-      isEditing: false
+      isEditing: false,
+      isChatBotVisible: false,
     };
 
     this.handleSelection = this.handleSelection.bind(this);
@@ -162,6 +164,8 @@ class HomePageComponent extends React.Component {
     });
   };
 
+  // Andy's Implementation for Edit Titles
+
   handleTitleChange = (value) => {
     const { activeKey, entries } = this.state;
 
@@ -176,6 +180,12 @@ class HomePageComponent extends React.Component {
     });
   };
 
+  // Used to Hide or show AI ChatBot window
+  toggleChatBot = () => {
+    this.setState((prevState) => ({
+      isChatBotVisible: !prevState.isChatBotVisible,
+    }));
+  };
 
   render() {
     const {
@@ -424,13 +434,12 @@ class HomePageComponent extends React.Component {
           Chat
         </button>
 
-        {/* ChatBot Component */}
+        {/* ChatBot Component, pass entries as props */}
         {this.state.isChatBotVisible && (
           <div className="chatbot-container">
-            <AIChatBot />
+            <AIChatBot entries={entries} darkMode={darkMode} />
           </div>
         )}
-
 
 
         <ScrollToTop smooth />

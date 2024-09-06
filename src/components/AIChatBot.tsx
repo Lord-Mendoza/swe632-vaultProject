@@ -1,23 +1,16 @@
-//to master
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import "./../styling/centerStyle.css";
 import "./../styling/AiChatBot.css";
 
-const AIChatBot: React.FC = () => {
-  const [entries, setEntries] = useState<any[]>([]);
+interface AIChatBotProps {
+  entries: { [key: string]: any };  // Accept entries as props
+  darkMode: boolean;
+}
+
+const AIChatBot: React.FC<AIChatBotProps> = ({ entries, darkMode }) => {
   const [question, setQuestion] = useState<string>("");
   const [response, setResponse] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-
-  // Load entries from the imported database
-  useEffect(() => {
-    const fetchEntries = () => {
-      const dbEntries = Object.values(database.entries);
-      setEntries(dbEntries);
-    };
-
-    fetchEntries();
-  }, [response]);
 
   // Function to handle user question and get response from LLM
   const handleAskQuestion = async () => {
@@ -27,7 +20,7 @@ const AIChatBot: React.FC = () => {
     setResponse(""); // Clear previous response
 
     // Prepare the prompt for the LLM
-    const notesContent = entries
+    const notesContent = Object.values(entries)
       .map((entry: any) => {
         const sections = entry.sections
           .map((section: any) => `${section.sectionTitle}: ${section.content}`)
@@ -36,7 +29,7 @@ const AIChatBot: React.FC = () => {
       })
       .join("\n\n");
 
-    const prompt = `Here are the notes:\n${notesContent}\n\nUser Question: ${question}\n\nKeep responses, short, do not include extra information\n`;
+    const prompt = `Here are the notes:\n${notesContent}\n\nUser Question: ${question}\n\nKeep responses short, do not include extra information\n`;
 
     try {
       const responseStream = await fetch(
@@ -90,7 +83,7 @@ const AIChatBot: React.FC = () => {
   };
 
   return (
-    <div className="container">
+    <div className={`container ${darkMode ? "dark-mode" : ""}`}>
       <h1 className="centered-heading">AI ChatBot</h1>
       <div className="form-group">
         <label htmlFor="question">Ask a question about your notes:</label>

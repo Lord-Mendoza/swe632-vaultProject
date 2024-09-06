@@ -20,7 +20,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "removedocs": "if exist docs rmdir /s /q docs 2>null",
+    "removedocs": "rm -rf docs",
     "postbuild": "rename build docs",
     "build-deploy": "npm run removedocs && npm run build"
   },

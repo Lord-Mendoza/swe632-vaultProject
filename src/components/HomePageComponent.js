@@ -15,6 +15,7 @@ import EntryComponent from "./EntryComponent";
 import { ConstantStrings } from "../utilities/constants/ConstantStrings";
 import AIChatBot from "./AIChatBot.tsx";
 import "../styling/BotToggle.css"
+import SearchBox from "./SearchBox";
 
 class HomePageComponent extends React.Component {
 
@@ -390,6 +391,12 @@ class HomePageComponent extends React.Component {
                 onChange={() => this.setState({
                   darkMode: !darkMode
                 }, this.setDarkModeToLocalStorage)}
+              />
+            </div>
+
+            <div>
+              <SearchBox
+                  entries={this.state.entries}
               />
             </div>
           </Navbar.Collapse>

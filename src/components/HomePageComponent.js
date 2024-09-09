@@ -17,6 +17,7 @@ import AIChatBot from "./AIChatBot.tsx";
 import "../styling/BotToggle.css"
 import "../styling/DeleteButtonStyling.css"
 import RecycleBin from "./RecycleBin.js"
+import FileUploadPopup from "./FileUploadPopup.js"
 
 class HomePageComponent extends React.Component {
 
@@ -89,6 +90,7 @@ class HomePageComponent extends React.Component {
         }
       },
       showRecycleBinModal: false, // Control Recycle Bin Visibility
+      showUploadPopup: false,
     };
 
     this.handleSelection = this.handleSelection.bind(this);
@@ -256,21 +258,21 @@ class HomePageComponent extends React.Component {
 
   handleDuplicateEntry = (key) => {
     const { entries } = this.state;
-  
+
     // Ensure the entry exists
     if (!entries[key]) {
       console.error("Entry not found");
       return;
     }
-  
+
     const entryToDuplicate = entries[key];
-  
+
     // Create a new title by appending " (copy)" to the original title
     const newTitle = entryToDuplicate.title + " (copy)";
-  
+
     // Generate a new unique key for the duplicated entry
     const newKey = key + " (copy)";
-  
+
     // Create a new entry with the same content but a new title
     const newEntries = {
       ...entries,
@@ -279,19 +281,41 @@ class HomePageComponent extends React.Component {
         title: newTitle // Set the new title for the duplicated entry
       }
     };
-  
+
     // Update the state with the new entries
     this.setState({ entries: newEntries });
-  
+
     console.log(`Entry duplicated as ${newTitle}`);
   }
-  
+
+  handleBackupVault = () => {
+    const { entries } = this.state;
+    const blob = new Blob([JSON.stringify(entries, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'vault-backup.json';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    console.log("Vault backed up to vault-backup.json");
+  }
+
+  handleRestoreVault = (data) => {
+    this.setState({ entries: data });
+    console.log("Vault restored from file");
+  }
+  toggleUploadPopup = () => {
+    this.setState(prevState => ({ showUploadPopup: !prevState.showUploadPopup }));
+  }
+
 
   render() {
     const {
       entries,
       activeKey, darkMode, showSidebar,
-      showCreateEditEntryPopup, entry, entryType, isEditing, trash
+      showCreateEditEntryPopup, entry, entryType, isEditing, trash, showUploadPopup
     } = this.state;
 
     AOS.init();
@@ -487,6 +511,7 @@ class HomePageComponent extends React.Component {
 
     return (
       <div>
+        {/* This is the navbar at the top of the page */}
         <Navbar sticky="top" collapseOnSelect expand="lg" bg="dark" variant="dark" style={{ padding: "10px" }}>
           <Navbar.Brand>
             <img src={"logo.png"} style={{ height: "24px", width: "24px", marginRight: "5px" }}
@@ -496,11 +521,13 @@ class HomePageComponent extends React.Component {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">
+              {/* This is the "Manage Vault" Dropdown */}
               <NavDropdown id="nav-dropdown" title="Manage Vault">
-                <NavDropdown.Item onClick={this.handleSelection}>Backup Vault to File</NavDropdown.Item>
-                <NavDropdown.Item onClick={this.handleSelection}>Restore Vault from
-                  File</NavDropdown.Item>
+                <NavDropdown.Item onClick={this.handleBackupVault}>Backup Vault to File</NavDropdown.Item>
+                <NavDropdown.Item onClick={this.toggleUploadPopup}>Restore Vault from File</NavDropdown.Item>
+                <NavDropdown.Item onClick={this.handleDeleteAllNotes}>Delete All</NavDropdown.Item>
               </NavDropdown>
+
 
               <Nav.Link onClick={() => this.showCreateEditEntryPopup(ConstantStrings.createStr)}>Create
                 New Entry</Nav.Link>
@@ -508,6 +535,7 @@ class HomePageComponent extends React.Component {
               <Nav.Link onClick={this.showRecycleBinModal}>
                 Recycle Bin
               </Nav.Link>
+
             </Nav>
 
             <div style={{ padding: ".5rem 1rem" }}>
@@ -577,6 +605,13 @@ class HomePageComponent extends React.Component {
           trash={this.state.trash}
           hideRecycleBinModal={this.hideRecycleBinModal}
           restoreFromTrash={this.restoreFromTrash}
+        />
+
+        {/* Render the file upload popup */}
+        <FileUploadPopup
+          show={showUploadPopup}
+          onClose={this.toggleUploadPopup}
+          onRestore={this.handleRestoreVault}
         />
 
         <ScrollToTop smooth />

@@ -1,4 +1,5 @@
-import { Col, Nav, Navbar, NavDropdown, Row } from "react-bootstrap";
+import React from "react";
+import { Col, Nav, Navbar, NavDropdown, Row, Modal } from "react-bootstrap";
 import { Button, Icon, Menu, Segment, Sidebar } from "semantic-ui-react";
 import "aos/dist/aos.css";
 import AOS from "aos";
@@ -6,7 +7,6 @@ import Prism from "prismjs";
 import "../styling/prism.css";
 import { Switch } from "antd";
 import ScrollToTop from "react-scroll-to-top";
-import React from "react";
 import { copyObject, isNotAnEmptyObject, isNotNullNorUndefined } from "../utilities/helpers/ObjectVariableFunctions";
 import { copyArrayOfObjects, isNotAnEmptyArray } from "../utilities/helpers/ArrayVariableValidators";
 import "../styling/HomePageComponent.css";
@@ -15,6 +15,8 @@ import EntryComponent from "./EntryComponent";
 import { ConstantStrings } from "../utilities/constants/ConstantStrings";
 import AIChatBot from "./AIChatBot.tsx";
 import "../styling/BotToggle.css"
+import "../styling/DeleteButtonStyling.css"
+import RecycleBin from "./RecycleBin.js"
 
 class HomePageComponent extends React.Component {
 
@@ -66,14 +68,27 @@ class HomePageComponent extends React.Component {
       copySuccess: "",
       showSidebar: true,
 
-
-
       showCreateEditEntryPopup: false,
       entryType: "",
       entry: {},
 
+      //Andy's Variables
       isEditing: false,
       isChatBotVisible: false,
+      // Define the trash state here
+      trash: {
+        "entryTrashOne": {
+          "insertDate": "2024-01-02",
+          "title": "First Trash",
+          "sections": [
+            {
+              "sectionTitle": "Description",
+              "content": "first trash"
+            }
+          ]
+        }
+      },
+      showRecycleBinModal: false, // Control Recycle Bin Visibility
     };
 
     this.handleSelection = this.handleSelection.bind(this);
@@ -165,7 +180,6 @@ class HomePageComponent extends React.Component {
   };
 
   // Andy's Implementation for Edit Titles
-
   handleTitleChange = (value) => {
     const { activeKey, entries } = this.state;
 
@@ -187,11 +201,65 @@ class HomePageComponent extends React.Component {
     }));
   };
 
+  // Method to move an entry to the trash
+  moveToTrash = (entryKey) => {
+    const { entries, trash } = this.state;
+
+    // Move entry from entries to trash
+    this.setState({
+      entries: Object.fromEntries(Object.entries(entries).filter(([key]) => key !== entryKey)),
+      trash: { ...trash, [entryKey]: entries[entryKey] },
+    });
+
+  };
+
+  // Method to restore an entry from the trash
+  restoreFromTrash = (entryKey) => {
+    const { entries, trash } = this.state;
+
+    // Move entry from trash back to entries
+    this.setState({
+      trash: Object.fromEntries(Object.entries(trash).filter(([key]) => key !== entryKey)),
+      entries: { ...entries, [entryKey]: trash[entryKey] },
+    });
+  };
+
+  // Handle delete and move to recycle
+  handleDeleteEntry = (entryKey) => {
+    const { entries, trash } = this.state; // Get both entries and trash from state
+
+    // Move the entry to trash
+    const movedEntry = entries[entryKey];
+    this.setState({
+      trash: {
+        ...trash, // Keep the previous trash entries
+        [entryKey]: movedEntry, // Add the deleted entry to the trash
+      },
+      entries: Object.keys(entries).reduce((result, key) => {
+        if (key !== entryKey) {
+          result[key] = entries[key]; // Keep only the non-deleted entries
+        }
+        return result;
+      }, {}),
+    });
+  };
+
+  // Method to show the Recycle Bin modal
+  showRecycleBinModal = () => {
+    this.setState({ showRecycleBinModal: true });
+  };
+
+  // Method to hide the Recycle Bin modal
+  hideRecycleBinModal = () => {
+    this.setState({ showRecycleBinModal: false });
+  };
+
+
   render() {
     const {
       entries,
       activeKey, darkMode, showSidebar,
-      showCreateEditEntryPopup, entry, entryType, isEditing
+      showCreateEditEntryPopup, entry, entryType, isEditing, trash
     } = this.state;
 
     AOS.init();
@@ -295,9 +363,8 @@ class HomePageComponent extends React.Component {
             </Segment>
           );
 
-
-
-          // Display to screen, should this be here? I see another return() below
+          // Display title and content to screen
+          // should this be here? I see another return() below
           return (
             <Row noGutters style={{ paddingBottom: ".5em", paddingLeft: "2em" }} key={index}>
               <Col xs={1}>{sectionTitle}</Col>
@@ -335,18 +402,37 @@ class HomePageComponent extends React.Component {
           {/* Show contents of all Sections */}
           {entryContents}
 
-          {/* if not editing, show an edit button */}
-          {!isEditing && (
-            <Button onClick={() => this.setState({ isEditing: true })}>
-              Edit
+
+          {/* Show Edit/Save and Delete */}
+          <Row noGutters style={{ paddingBottom: '.5em', paddingLeft: '1em', marginTop: '10px', display: 'flex', alignItems: 'center' }}>
+            {/* if not editing, show an edit button */}
+            {/* if editing, show a save button */}
+            {isEditing ? (
+              <Button
+                onClick={() => this.setState({ isEditing: false })}
+                style={{ width: '80px' }} // Adjust width as needed
+              >
+                Save
+              </Button>
+            ) : (
+              <Button
+                onClick={() => this.setState({ isEditing: true })}
+                style={{ width: '80px' }} // Adjust width as needed
+              >
+                Edit
+              </Button>
+            )}
+            {/* Delete Button next to Edit */}
+            <Button
+              color="red"
+              onClick={() => this.handleDeleteEntry(activeKey)}
+              style={{ width: '80px', marginLeft: '10px' }} // Adjust width as needed
+            >
+              Delete
             </Button>
-          )}
-          {/* if editing, show a save button */}
-          {isEditing && (
-            <Button onClick={() => this.setState({ isEditing: false })}>
-              Save
-            </Button>
-          )}
+          </Row>
+
+
 
         </Segment>
       );
@@ -379,6 +465,10 @@ class HomePageComponent extends React.Component {
 
               <Nav.Link onClick={() => this.showCreateEditEntryPopup(ConstantStrings.createStr)}>Create
                 New Entry</Nav.Link>
+              {/* Add Recycle Bin Tab */}
+              <Nav.Link onClick={this.showRecycleBinModal}>
+                Recycle Bin
+              </Nav.Link>
             </Nav>
 
             <div style={{ padding: ".5rem 1rem" }}>
@@ -392,6 +482,7 @@ class HomePageComponent extends React.Component {
                 }, this.setDarkModeToLocalStorage)}
               />
             </div>
+
           </Navbar.Collapse>
         </Navbar>
 
@@ -441,6 +532,13 @@ class HomePageComponent extends React.Component {
           </div>
         )}
 
+        {/* Recycle Bin Modal */}
+        <RecycleBin
+          show={this.state.showRecycleBinModal}
+          trash={this.state.trash}
+          hideRecycleBinModal={this.hideRecycleBinModal}
+          restoreFromTrash={this.restoreFromTrash}
+        />
 
         <ScrollToTop smooth />
 

@@ -1,0 +1,26 @@
+.entries-section, .trash-section {
+    margin-top: 20px;
+  }
+  
+  .entry-item, .trash-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  
+  .entry-item h3, .trash-item h3 {
+    margin: 0;
+  }
+  
+  button {
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+  

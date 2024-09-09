@@ -16,6 +16,7 @@ import { ConstantStrings } from "../utilities/constants/ConstantStrings";
 import AIChatBot from "./AIChatBot.tsx";
 import "../styling/BotToggle.css"
 import "../styling/DeleteButtonStyling.css"
+import RecycleBin from "./RecycleBin.js"
 
 class HomePageComponent extends React.Component {
 
@@ -67,12 +68,11 @@ class HomePageComponent extends React.Component {
       copySuccess: "",
       showSidebar: true,
 
-
-
       showCreateEditEntryPopup: false,
       entryType: "",
       entry: {},
-
+      
+      //Andy's Variables
       isEditing: false,
       isChatBotVisible: false,
       // Define the trash state here
@@ -180,7 +180,6 @@ class HomePageComponent extends React.Component {
   };
 
   // Andy's Implementation for Edit Titles
-
   handleTitleChange = (value) => {
     const { activeKey, entries } = this.state;
 
@@ -225,6 +224,7 @@ class HomePageComponent extends React.Component {
     });
   };
 
+  // Handle delete and move to recycle
   handleDeleteEntry = (entryKey) => {
     const { entries, trash } = this.state; // Get both entries and trash from state
 
@@ -253,35 +253,6 @@ class HomePageComponent extends React.Component {
   hideRecycleBinModal = () => {
     this.setState({ showRecycleBinModal: false });
   };
-
-  renderRecycleBinModal() {
-    const { trash } = this.state;
-    return (
-      <Modal show={this.state.showRecycleBinModal} onHide={this.hideRecycleBinModal} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Recycle Bin</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {Object.entries(trash).length === 0 ? (
-            <p>No entries in the trash.</p>
-          ) : (
-            Object.entries(trash).map(([key, entry]) => (
-              <div key={key} className="trash-item">
-                <h3>{entry.title}</h3>
-                <button onClick={() => this.restoreFromTrash(key)}>Restore</button>
-              </div>
-            ))
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={this.hideRecycleBinModal}>
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    );
-  }
-
 
 
   render() {
@@ -392,8 +363,6 @@ class HomePageComponent extends React.Component {
             </Segment>
           );
 
-
-
           // Display title and content to screen
           // should this be here? I see another return() below
           return (
@@ -434,12 +403,7 @@ class HomePageComponent extends React.Component {
           {entryContents}
 
 
-
-
-
-
-
-          {/* Button Row */}
+          {/* Show Edit/Save and Delete */}
           <Row noGutters style={{ paddingBottom: '.5em', paddingLeft: '1em', marginTop: '10px' }}>
             {/* if not editing, show an edit button */}
             {/* if editing, show a save button */}
@@ -503,10 +467,6 @@ class HomePageComponent extends React.Component {
               />
             </div>
 
-
-
-
-
           </Navbar.Collapse>
         </Navbar>
 
@@ -556,11 +516,13 @@ class HomePageComponent extends React.Component {
           </div>
         )}
 
-    
-
         {/* Recycle Bin Modal */}
-        {this.renderRecycleBinModal()}
-
+        <RecycleBin
+          show={this.state.showRecycleBinModal}
+          trash={this.state.trash}
+          hideRecycleBinModal={this.hideRecycleBinModal}
+          restoreFromTrash={this.restoreFromTrash}
+        />
 
         <ScrollToTop smooth />
 

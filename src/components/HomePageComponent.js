@@ -18,6 +18,7 @@ import "../styling/BotToggle.css"
 import "../styling/DeleteButtonStyling.css"
 import RecycleBin from "./RecycleBin.js"
 import FileUploadPopup from "./FileUploadPopup.js"
+import SearchBox from "./SearchBox";
 
 class HomePageComponent extends React.Component {
 
@@ -562,6 +563,12 @@ class HomePageComponent extends React.Component {
               />
             </div>
 
+            <div>
+              <SearchBox
+                  entries={this.state.entries}
+                  onClickResult={this.changeActiveKey}
+              />
+            </div>
           </Navbar.Collapse>
         </Navbar>
 

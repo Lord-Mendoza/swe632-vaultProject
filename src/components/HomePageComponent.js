@@ -1,5 +1,5 @@
 import React from "react";
-import {Col, Form, Nav, Navbar, Row} from "react-bootstrap";
+import {Col, Form, Nav, Navbar, NavDropdown, Row} from "react-bootstrap";
 import {Button, Icon, Menu, Segment, Sidebar} from "semantic-ui-react";
 import "aos/dist/aos.css";
 import AOS from "aos";
@@ -512,12 +512,10 @@ class HomePageComponent extends React.Component {
                         <Button icon onClick={() => this.handleDeleteEntry(activeKey)}>
                             <Icon name="trash alternate"/>
                         </Button>
+
                         {/* Duplicate Button next to Delete */}
-                        <Button
-                            onClick={() => this.handleDuplicateEntry(activeKey)}
-                            style={{width: '100px', marginLeft: '10px'}} // Adjust width as needed
-                        >
-                            Duplicate
+                        <Button icon onClick={() => this.handleDuplicateEntry(activeKey)}>
+                            <Icon name="copy"/>
                         </Button>
                     </div>
                 </Segment>
@@ -543,48 +541,43 @@ class HomePageComponent extends React.Component {
                     </Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav"/>
                     <Navbar.Collapse id="basic-navbar-nav">
+                        <SearchBox
+                            entries={this.state.entries}
+                            onClickResult={this.changeActiveKey}
+                        />
+
                         <Nav className="mr-auto">
-                            {/* This is the "Manage Vault" Dropdown */}
-                            <NavDropdown id="nav-dropdown" title="Manage Vault">
-
-                                {/*TODO: Re-enable once implemented
-
-                <NavDropdown.Item onClick={this.handleBackupVault}>Backup Vault to File</NavDropdown.Item>
-                <NavDropdown.Item onClick={this.toggleUploadPopup}>Restore Vault from File</NavDropdown.Item>
-                */}
-                                <NavDropdown.Item onClick={this.handleDeleteAllNotes}>Delete All</NavDropdown.Item>
-
-                            </NavDropdown>
-
                             <Nav.Link onClick={() => this.showCreateEditEntryPopup(ConstantStrings.createStr)}>
                                 Create New Entry
                             </Nav.Link>
+
+                            {/* This is the "Manage Vault" Dropdown */}
+                            <NavDropdown id="nav-dropdown" title="Manage Vault">
+                                {/*TODO: Re-enable once implemented
+                                <NavDropdown.Item onClick={this.handleBackupVault}>Backup Vault to File</NavDropdown.Item>
+                                <NavDropdown.Item onClick={this.toggleUploadPopup}>Restore Vault from File</NavDropdown.Item>
+                                */}
+                                <NavDropdown.Item onClick={this.handleDeleteAllNotes}>Delete All</NavDropdown.Item>
+                            </NavDropdown>
+
                             {/* Add Recycle Bin Tab */}
                             <Nav.Link onClick={this.showRecycleBinModal}>
                                 Recycle Bin
                             </Nav.Link>
-
                         </Nav>
-
-                        <div style={{padding: ".5rem 1rem"}}>
-                            <span className={"darkModeLabel"}> Dark Mode: &nbsp;</span>
-                            <Switch
-                                checkedChildren={<Icon name="moon"/>}
-                                unCheckedChildren={<Icon name="sun" inverted/>}
-                                checked={darkMode}
-                                onChange={() => this.setState({
-                                    darkMode: !darkMode
-                                }, this.setDarkModeToLocalStorage)}
-                            />
-                        </div>
-
-            <div>
-              <SearchBox
-                  entries={this.state.entries}
-                  onClickResult={this.changeActiveKey}
-              />
-            </div>
                     </Navbar.Collapse>
+
+                    <div style={{padding: ".5rem 1rem"}}>
+                        <span className={"darkModeLabel"}> Dark Mode: &nbsp;</span>
+                        <Switch
+                            checkedChildren={<Icon name="moon"/>}
+                            unCheckedChildren={<Icon name="sun" inverted/>}
+                            checked={darkMode}
+                            onChange={() => this.setState({
+                                darkMode: !darkMode
+                            }, this.setDarkModeToLocalStorage)}
+                        />
+                    </div>
                 </Navbar>
 
                 <div style={{marginTop: "-10px", paddingBottom: "15px", ...style}}

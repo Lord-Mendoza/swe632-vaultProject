@@ -264,21 +264,26 @@ class HomePageComponent extends React.Component {
     }
   
     const entryToDuplicate = entries[key];
+  
+    // Create a new title by appending " (copy)" to the original title
+    const newTitle = entryToDuplicate.title + " (copy)";
+  
+    // Generate a new unique key for the duplicated entry
     const newKey = key + " (copy)";
   
-    // Create a new entry with the same content
+    // Create a new entry with the same content but a new title
     const newEntries = {
       ...entries,
       [newKey]: {
         ...entryToDuplicate,
-        title: newKey // Update the title to reflect the duplicate
+        title: newTitle // Set the new title for the duplicated entry
       }
     };
   
     // Update the state with the new entries
     this.setState({ entries: newEntries });
   
-    console.log(`Entry duplicated as ${newKey}`);
+    console.log(`Entry duplicated as ${newTitle}`);
   }
   
 

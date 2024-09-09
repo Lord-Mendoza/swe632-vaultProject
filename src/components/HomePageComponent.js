@@ -285,6 +285,16 @@ class HomePageComponent extends React.Component {
   
     console.log(`Entry duplicated as ${newTitle}`);
   }
+
+  handleDeleteAllNotes = () => {
+    // Confirm the action with the user
+    if (window.confirm("Are you sure you want to delete all notes? This action cannot be undone.")) {
+      // Clear all entries
+      this.setState({ entries: {}, trash: {} });
+      console.log("All notes have been deleted.");
+    }
+  }
+  
   
 
   render() {
@@ -500,6 +510,7 @@ class HomePageComponent extends React.Component {
                 <NavDropdown.Item onClick={this.handleSelection}>Backup Vault to File</NavDropdown.Item>
                 <NavDropdown.Item onClick={this.handleSelection}>Restore Vault from
                   File</NavDropdown.Item>
+                  <NavDropdown.Item onClick={this.handleDeleteAllNotes}>Delete All</NavDropdown.Item>
               </NavDropdown>
 
               <Nav.Link onClick={() => this.showCreateEditEntryPopup(ConstantStrings.createStr)}>Create

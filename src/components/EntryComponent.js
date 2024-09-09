@@ -17,10 +17,13 @@ class EntryComponent extends Component {
 
     handleFormInput(e){
         const {entry} = this.state;
-        const {name, value} = e.target;
+        const {name, value, checked} = e.target;
 
         let newEntry = copyObject(entry);
-        newEntry[name] = value;
+        if (name === "isCode")
+            newEntry[name] = checked;
+        else
+            newEntry[name] = value;
 
         this.setState({entry: newEntry});
     }
@@ -47,11 +50,14 @@ class EntryComponent extends Component {
 
                     <Form.Group className="mb-3" controlId="description">
                         <Form.Label>Description</Form.Label>
-                        <Form.Control as="textarea" name="description" placeholder="Description"
+                        <Form.Control name="description" as="textarea" placeholder="Description"
                                       onChange={this.handleFormInput}
                                       value={entry["description"]}
                         />
-                        <Form.Check type="checkbox" label="Format as code?"/>
+                        <Form.Check name="isCode" type="checkbox" label="Format as code?"
+                                    onChange={this.handleFormInput}
+                                    value={entry["isCode"]}
+                        />
                     </Form.Group>
                 </Form>
             </Modal.Body>

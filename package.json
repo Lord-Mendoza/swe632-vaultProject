@@ -32,6 +32,10 @@
       "react-app"
     ]
   },
+  "eslintIgnore": [
+    "node_modules",
+    "build/*"
+  ],
   "browserslist": {
     "production": [
       ">0.2%",
@@ -43,5 +47,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@typescript-eslint/parser": "^8.4.0",
+    "typescript": "^5.5.4"
   }
 }

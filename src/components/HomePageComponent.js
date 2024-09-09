@@ -226,7 +226,7 @@ class HomePageComponent extends React.Component {
 
   handleDeleteEntry = (entryKey) => {
     const { entries, trash } = this.state; // Get both entries and trash from state
-  
+
     // Move the entry to trash
     const movedEntry = entries[entryKey];
     this.setState({
@@ -242,7 +242,7 @@ class HomePageComponent extends React.Component {
       }, {}),
     });
   };
-  
+
 
   render() {
     const {
@@ -445,6 +445,10 @@ class HomePageComponent extends React.Component {
 
               <Nav.Link onClick={() => this.showCreateEditEntryPopup(ConstantStrings.createStr)}>Create
                 New Entry</Nav.Link>
+              {/* Add Recycle Bin Tab */}
+              <Nav.Link onClick={() => this.setState({ activeTab: "recycleBin" })}>
+                Recycle Bin
+              </Nav.Link>
             </Nav>
 
             <div style={{ padding: ".5rem 1rem" }}>
@@ -458,6 +462,11 @@ class HomePageComponent extends React.Component {
                 }, this.setDarkModeToLocalStorage)}
               />
             </div>
+
+
+
+
+
           </Navbar.Collapse>
         </Navbar>
 

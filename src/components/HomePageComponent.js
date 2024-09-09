@@ -310,6 +310,16 @@ class HomePageComponent extends React.Component {
     this.setState(prevState => ({ showUploadPopup: !prevState.showUploadPopup }));
   }
 
+  handleDeleteAllNotes = () => {
+    // Confirm the action with the user
+    if (window.confirm("Are you sure you want to delete all notes? This action cannot be undone.")) {
+      // Clear all entries
+      this.setState({ entries: {}, trash: {} });
+      console.log("All notes have been deleted.");
+    }
+  }
+
+
 
   render() {
     const {
@@ -523,9 +533,11 @@ class HomePageComponent extends React.Component {
             <Nav className="mr-auto">
               {/* This is the "Manage Vault" Dropdown */}
               <NavDropdown id="nav-dropdown" title="Manage Vault">
+
                 <NavDropdown.Item onClick={this.handleBackupVault}>Backup Vault to File</NavDropdown.Item>
                 <NavDropdown.Item onClick={this.toggleUploadPopup}>Restore Vault from File</NavDropdown.Item>
                 <NavDropdown.Item onClick={this.handleDeleteAllNotes}>Delete All</NavDropdown.Item>
+
               </NavDropdown>
 
 

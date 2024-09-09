@@ -254,6 +254,33 @@ class HomePageComponent extends React.Component {
     this.setState({ showRecycleBinModal: false });
   };
 
+  handleDuplicateEntry = (key) => {
+    const { entries } = this.state;
+  
+    // Ensure the entry exists
+    if (!entries[key]) {
+      console.error("Entry not found");
+      return;
+    }
+  
+    const entryToDuplicate = entries[key];
+    const newKey = key + " (copy)";
+  
+    // Create a new entry with the same content
+    const newEntries = {
+      ...entries,
+      [newKey]: {
+        ...entryToDuplicate,
+        title: newKey // Update the title to reflect the duplicate
+      }
+    };
+  
+    // Update the state with the new entries
+    this.setState({ entries: newEntries });
+  
+    console.log(`Entry duplicated as ${newKey}`);
+  }
+  
 
   render() {
     const {
@@ -429,6 +456,13 @@ class HomePageComponent extends React.Component {
               style={{ width: '80px', marginLeft: '10px' }} // Adjust width as needed
             >
               Delete
+            </Button>
+            {/* Duplicate Button next to Delete */}
+            <Button
+              onClick={() => this.handleDuplicateEntry(activeKey)}
+              style={{ width: '100px', marginLeft: '10px' }} // Adjust width as needed
+            >
+              Duplicate
             </Button>
           </Row>
 

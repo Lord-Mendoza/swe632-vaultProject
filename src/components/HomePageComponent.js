@@ -1,4 +1,5 @@
-import { Col, Nav, Navbar, NavDropdown, Row } from "react-bootstrap";
+import React from "react";
+import { Col, Nav, Navbar, NavDropdown, Row, Modal } from "react-bootstrap";
 import { Button, Icon, Menu, Segment, Sidebar } from "semantic-ui-react";
 import "aos/dist/aos.css";
 import AOS from "aos";
@@ -6,7 +7,6 @@ import Prism from "prismjs";
 import "../styling/prism.css";
 import { Switch } from "antd";
 import ScrollToTop from "react-scroll-to-top";
-import React from "react";
 import { copyObject, isNotAnEmptyObject, isNotNullNorUndefined } from "../utilities/helpers/ObjectVariableFunctions";
 import { copyArrayOfObjects, isNotAnEmptyArray } from "../utilities/helpers/ArrayVariableValidators";
 import "../styling/HomePageComponent.css";
@@ -88,6 +88,7 @@ class HomePageComponent extends React.Component {
           ]
         }
       },
+      showRecycleBinModal: false, // Control Recycle Bin Visibility
     };
 
     this.handleSelection = this.handleSelection.bind(this);
@@ -242,6 +243,45 @@ class HomePageComponent extends React.Component {
       }, {}),
     });
   };
+
+  // Method to show the Recycle Bin modal
+  showRecycleBinModal = () => {
+    this.setState({ showRecycleBinModal: true });
+  };
+
+  // Method to hide the Recycle Bin modal
+  hideRecycleBinModal = () => {
+    this.setState({ showRecycleBinModal: false });
+  };
+
+  renderRecycleBinModal() {
+    const { trash } = this.state;
+    return (
+      <Modal show={this.state.showRecycleBinModal} onHide={this.hideRecycleBinModal} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Recycle Bin</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {Object.entries(trash).length === 0 ? (
+            <p>No entries in the trash.</p>
+          ) : (
+            Object.entries(trash).map(([key, entry]) => (
+              <div key={key} className="trash-item">
+                <h3>{entry.title}</h3>
+                <button onClick={() => this.restoreFromTrash(key)}>Restore</button>
+              </div>
+            ))
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={this.hideRecycleBinModal}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    );
+  }
+
 
 
   render() {
@@ -446,7 +486,7 @@ class HomePageComponent extends React.Component {
               <Nav.Link onClick={() => this.showCreateEditEntryPopup(ConstantStrings.createStr)}>Create
                 New Entry</Nav.Link>
               {/* Add Recycle Bin Tab */}
-              <Nav.Link onClick={() => this.setState({ activeTab: "recycleBin" })}>
+              <Nav.Link onClick={this.showRecycleBinModal}>
                 Recycle Bin
               </Nav.Link>
             </Nav>
@@ -516,22 +556,10 @@ class HomePageComponent extends React.Component {
           </div>
         )}
 
-        {/* Implementing Recycle Bin Here */}
+    
 
-
-        <div className="trash-section">
-          <h2>Recycle Bin</h2>
-          {Object.entries(trash).length === 0 ? (
-            <p>No entries in the trash.</p>
-          ) : (
-            Object.entries(trash).map(([key, entry]) => (
-              <div key={key} className="trash-item">
-                <h3>{entry.title}</h3>
-                <button onClick={() => this.restoreFromTrash(key)}>Restore</button>
-              </div>
-            ))
-          )}
-        </div>
+        {/* Recycle Bin Modal */}
+        {this.renderRecycleBinModal()}
 
 
         <ScrollToTop smooth />

@@ -553,10 +553,10 @@ class HomePageComponent extends React.Component {
 
                             {/* This is the "Manage Vault" Dropdown */}
                             <NavDropdown id="nav-dropdown" title="Manage Vault">
-                                {/*TODO: Re-enable once implemented
+                                
                                 <NavDropdown.Item onClick={this.handleBackupVault}>Backup Vault to File</NavDropdown.Item>
                                 <NavDropdown.Item onClick={this.toggleUploadPopup}>Restore Vault from File</NavDropdown.Item>
-                                */}
+                                
                                 <NavDropdown.Item onClick={this.handleDeleteAllNotes}>Delete All</NavDropdown.Item>
                             </NavDropdown>
 

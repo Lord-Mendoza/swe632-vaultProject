@@ -397,6 +397,7 @@ class HomePageComponent extends React.Component {
             <div>
               <SearchBox
                   entries={this.state.entries}
+                  onClickResult={this.changeActiveKey}
               />
             </div>
           </Navbar.Collapse>

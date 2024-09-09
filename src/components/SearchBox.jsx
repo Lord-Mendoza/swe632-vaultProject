@@ -4,7 +4,7 @@ import { AutoComplete, Input } from 'antd';
 
 const searchResult = (query, data) =>
     Object.values(data)
-        .map((entry, idx) => {
+        .map((entry) => {
             const fields = [entry.title, ...(entry.sections?.map((s) => s.content) ?? [])];
 
             for (const field of fields) {
@@ -19,7 +19,7 @@ const searchResult = (query, data) =>
                                 }}
                             >
                                 <span>
-                                    Found {`${field.match(new RegExp(`\\b\\w*${query}\\w*\\b`, 'i'))}`} in {`${entry.title}`}
+                                    Found {`${field.match(new RegExp(`\\b\\w*${query}\\w*\\b`, 'i'))}`} in <strong>{`${entry.title}`}</strong>
                                 </span>
                             </div>
                         ),
@@ -31,13 +31,19 @@ const searchResult = (query, data) =>
         })
         .filter((result) => result !== undefined);
 
-const SearchBox = ({entries}) => {
+const SearchBox = ({entries, onClickResult}) => {
     const [options, setOptions] = useState([]);
     const handleSearch = (value) => {
         setOptions(value ? searchResult(value, entries) : []);
     };
     const onSelect = (value) => {
-        console.log('onSelect', value);
+        // find key whose object matches the title
+        // inefficient, but it'll work :)
+        for (let key in entries) {
+            if (entries[key].title === value) {
+                onClickResult(new MouseEvent(''), { name: key });
+            }
+        }
     };
     return (
         <AutoComplete

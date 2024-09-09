@@ -71,7 +71,7 @@ class HomePageComponent extends React.Component {
       showCreateEditEntryPopup: false,
       entryType: "",
       entry: {},
-      
+
       //Andy's Variables
       isEditing: false,
       isChatBotVisible: false,
@@ -404,19 +404,35 @@ class HomePageComponent extends React.Component {
 
 
           {/* Show Edit/Save and Delete */}
-          <Row noGutters style={{ paddingBottom: '.5em', paddingLeft: '1em', marginTop: '10px' }}>
+          <Row noGutters style={{ paddingBottom: '.5em', paddingLeft: '1em', marginTop: '10px', display: 'flex', alignItems: 'center' }}>
             {/* if not editing, show an edit button */}
             {/* if editing, show a save button */}
             {isEditing ? (
-              <Button onClick={() => this.setState({ isEditing: false })}>Save</Button>
+              <Button
+                onClick={() => this.setState({ isEditing: false })}
+                style={{ width: '80px' }} // Adjust width as needed
+              >
+                Save
+              </Button>
             ) : (
-              <Button onClick={() => this.setState({ isEditing: true })}>Edit</Button>
+              <Button
+                onClick={() => this.setState({ isEditing: true })}
+                style={{ width: '80px' }} // Adjust width as needed
+              >
+                Edit
+              </Button>
             )}
             {/* Delete Button next to Edit */}
-            <Button color="red" onClick={() => this.handleDeleteEntry(activeKey)} style={{ marginLeft: '10px' }}>
+            <Button
+              color="red"
+              onClick={() => this.handleDeleteEntry(activeKey)}
+              style={{ width: '80px', marginLeft: '10px' }} // Adjust width as needed
+            >
               Delete
             </Button>
           </Row>
+
+
 
         </Segment>
       );

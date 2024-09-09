@@ -21,7 +21,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "removedocs": "rm -rf docs",
-    "postbuild": "rename build docs",
+    "postbuild": "mv build docs",
     "build-deploy": "npm run removedocs && npm run build"
   },
   "eslintConfig": {

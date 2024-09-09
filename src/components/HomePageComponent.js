@@ -1,4 +1,5 @@
-import { Col, Nav, Navbar, NavDropdown, Row } from "react-bootstrap";
+import React from "react";
+import { Col, Nav, Navbar, NavDropdown, Row, Modal } from "react-bootstrap";
 import { Button, Icon, Menu, Segment, Sidebar } from "semantic-ui-react";
 import "aos/dist/aos.css";
 import AOS from "aos";
@@ -6,7 +7,6 @@ import Prism from "prismjs";
 import "../styling/prism.css";
 import { Switch } from "antd";
 import ScrollToTop from "react-scroll-to-top";
-import React from "react";
 import { copyObject, isNotAnEmptyObject, isNotNullNorUndefined } from "../utilities/helpers/ObjectVariableFunctions";
 import { copyArrayOfObjects, isNotAnEmptyArray } from "../utilities/helpers/ArrayVariableValidators";
 import "../styling/HomePageComponent.css";
@@ -15,6 +15,9 @@ import EntryComponent from "./EntryComponent";
 import { ConstantStrings } from "../utilities/constants/ConstantStrings";
 import AIChatBot from "./AIChatBot.tsx";
 import "../styling/BotToggle.css"
+import "../styling/DeleteButtonStyling.css"
+import RecycleBin from "./RecycleBin.js"
+import FileUploadPopup from "./FileUploadPopup.js"
 import SearchBox from "./SearchBox";
 
 class HomePageComponent extends React.Component {
@@ -67,14 +70,28 @@ class HomePageComponent extends React.Component {
       copySuccess: "",
       showSidebar: true,
 
-
-
       showCreateEditEntryPopup: false,
       entryType: "",
       entry: {},
 
+      //Andy's Variables
       isEditing: false,
       isChatBotVisible: false,
+      // Define the trash state here
+      trash: {
+        "entryTrashOne": {
+          "insertDate": "2024-01-02",
+          "title": "First Trash",
+          "sections": [
+            {
+              "sectionTitle": "Description",
+              "content": "first trash"
+            }
+          ]
+        }
+      },
+      showRecycleBinModal: false, // Control Recycle Bin Visibility
+      showUploadPopup: false,
     };
 
     this.handleSelection = this.handleSelection.bind(this);
@@ -166,7 +183,6 @@ class HomePageComponent extends React.Component {
   };
 
   // Andy's Implementation for Edit Titles
-
   handleTitleChange = (value) => {
     const { activeKey, entries } = this.state;
 
@@ -188,11 +204,129 @@ class HomePageComponent extends React.Component {
     }));
   };
 
+  // Method to move an entry to the trash
+  moveToTrash = (entryKey) => {
+    const { entries, trash } = this.state;
+
+    // Move entry from entries to trash
+    this.setState({
+      entries: Object.fromEntries(Object.entries(entries).filter(([key]) => key !== entryKey)),
+      trash: { ...trash, [entryKey]: entries[entryKey] },
+    });
+
+  };
+
+  // Method to restore an entry from the trash
+  restoreFromTrash = (entryKey) => {
+    const { entries, trash } = this.state;
+
+    // Move entry from trash back to entries
+    this.setState({
+      trash: Object.fromEntries(Object.entries(trash).filter(([key]) => key !== entryKey)),
+      entries: { ...entries, [entryKey]: trash[entryKey] },
+    });
+  };
+
+  // Handle delete and move to recycle
+  handleDeleteEntry = (entryKey) => {
+    const { entries, trash } = this.state; // Get both entries and trash from state
+
+    // Move the entry to trash
+    const movedEntry = entries[entryKey];
+    this.setState({
+      trash: {
+        ...trash, // Keep the previous trash entries
+        [entryKey]: movedEntry, // Add the deleted entry to the trash
+      },
+      entries: Object.keys(entries).reduce((result, key) => {
+        if (key !== entryKey) {
+          result[key] = entries[key]; // Keep only the non-deleted entries
+        }
+        return result;
+      }, {}),
+    });
+  };
+
+  // Method to show the Recycle Bin modal
+  showRecycleBinModal = () => {
+    this.setState({ showRecycleBinModal: true });
+  };
+
+  // Method to hide the Recycle Bin modal
+  hideRecycleBinModal = () => {
+    this.setState({ showRecycleBinModal: false });
+  };
+
+  handleDuplicateEntry = (key) => {
+    const { entries } = this.state;
+
+    // Ensure the entry exists
+    if (!entries[key]) {
+      console.error("Entry not found");
+      return;
+    }
+
+    const entryToDuplicate = entries[key];
+
+    // Create a new title by appending " (copy)" to the original title
+    const newTitle = entryToDuplicate.title + " (copy)";
+
+    // Generate a new unique key for the duplicated entry
+    const newKey = key + " (copy)";
+
+    // Create a new entry with the same content but a new title
+    const newEntries = {
+      ...entries,
+      [newKey]: {
+        ...entryToDuplicate,
+        title: newTitle // Set the new title for the duplicated entry
+      }
+    };
+
+    // Update the state with the new entries
+    this.setState({ entries: newEntries });
+
+    console.log(`Entry duplicated as ${newTitle}`);
+  }
+
+  handleBackupVault = () => {
+    const { entries } = this.state;
+    const blob = new Blob([JSON.stringify(entries, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'vault-backup.json';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    console.log("Vault backed up to vault-backup.json");
+  }
+
+  handleRestoreVault = (data) => {
+    this.setState({ entries: data });
+    console.log("Vault restored from file");
+  }
+  toggleUploadPopup = () => {
+    this.setState(prevState => ({ showUploadPopup: !prevState.showUploadPopup }));
+  }
+
+  handleDeleteAllNotes = () => {
+    // Confirm the action with the user
+    if (window.confirm("Are you sure you want to delete all notes? This action cannot be undone.")) {
+      // Clear all entries
+      this.setState({ entries: {}, trash: {} });
+      console.log("All notes have been deleted.");
+    }
+  }
+
+
+
   render() {
     const {
       entries,
       activeKey, darkMode, showSidebar,
-      showCreateEditEntryPopup, entry, entryType, isEditing
+      showCreateEditEntryPopup, entry, entryType, isEditing, trash, showUploadPopup
     } = this.state;
 
     AOS.init();
@@ -296,9 +430,8 @@ class HomePageComponent extends React.Component {
             </Segment>
           );
 
-
-
-          // Display to screen, should this be here? I see another return() below
+          // Display title and content to screen
+          // should this be here? I see another return() below
           return (
             <Row noGutters style={{ paddingBottom: ".5em", paddingLeft: "2em" }} key={index}>
               <Col xs={1}>{sectionTitle}</Col>
@@ -336,18 +469,44 @@ class HomePageComponent extends React.Component {
           {/* Show contents of all Sections */}
           {entryContents}
 
-          {/* if not editing, show an edit button */}
-          {!isEditing && (
-            <Button onClick={() => this.setState({ isEditing: true })}>
-              Edit
+
+          {/* Show Edit/Save and Delete */}
+          <Row noGutters style={{ paddingBottom: '.5em', paddingLeft: '1em', marginTop: '10px', display: 'flex', alignItems: 'center' }}>
+            {/* if not editing, show an edit button */}
+            {/* if editing, show a save button */}
+            {isEditing ? (
+              <Button
+                onClick={() => this.setState({ isEditing: false })}
+                style={{ width: '80px' }} // Adjust width as needed
+              >
+                Save
+              </Button>
+            ) : (
+              <Button
+                onClick={() => this.setState({ isEditing: true })}
+                style={{ width: '80px' }} // Adjust width as needed
+              >
+                Edit
+              </Button>
+            )}
+            {/* Delete Button next to Edit */}
+            <Button
+              color="red"
+              onClick={() => this.handleDeleteEntry(activeKey)}
+              style={{ width: '80px', marginLeft: '10px' }} // Adjust width as needed
+            >
+              Delete
             </Button>
-          )}
-          {/* if editing, show a save button */}
-          {isEditing && (
-            <Button onClick={() => this.setState({ isEditing: false })}>
-              Save
+            {/* Duplicate Button next to Delete */}
+            <Button
+              onClick={() => this.handleDuplicateEntry(activeKey)}
+              style={{ width: '100px', marginLeft: '10px' }} // Adjust width as needed
+            >
+              Duplicate
             </Button>
-          )}
+          </Row>
+
+
 
         </Segment>
       );
@@ -363,6 +522,7 @@ class HomePageComponent extends React.Component {
 
     return (
       <div>
+        {/* This is the navbar at the top of the page */}
         <Navbar sticky="top" collapseOnSelect expand="lg" bg="dark" variant="dark" style={{ padding: "10px" }}>
           <Navbar.Brand>
             <img src={"logo.png"} style={{ height: "24px", width: "24px", marginRight: "5px" }}
@@ -372,14 +532,23 @@ class HomePageComponent extends React.Component {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">
+              {/* This is the "Manage Vault" Dropdown */}
               <NavDropdown id="nav-dropdown" title="Manage Vault">
-                <NavDropdown.Item onClick={this.handleSelection}>Backup Vault to File</NavDropdown.Item>
-                <NavDropdown.Item onClick={this.handleSelection}>Restore Vault from
-                  File</NavDropdown.Item>
+
+                <NavDropdown.Item onClick={this.handleBackupVault}>Backup Vault to File</NavDropdown.Item>
+                <NavDropdown.Item onClick={this.toggleUploadPopup}>Restore Vault from File</NavDropdown.Item>
+                <NavDropdown.Item onClick={this.handleDeleteAllNotes}>Delete All</NavDropdown.Item>
+
               </NavDropdown>
+
 
               <Nav.Link onClick={() => this.showCreateEditEntryPopup(ConstantStrings.createStr)}>Create
                 New Entry</Nav.Link>
+              {/* Add Recycle Bin Tab */}
+              <Nav.Link onClick={this.showRecycleBinModal}>
+                Recycle Bin
+              </Nav.Link>
+
             </Nav>
 
             <div style={{ padding: ".5rem 1rem" }}>
@@ -449,6 +618,20 @@ class HomePageComponent extends React.Component {
           </div>
         )}
 
+        {/* Recycle Bin Modal */}
+        <RecycleBin
+          show={this.state.showRecycleBinModal}
+          trash={this.state.trash}
+          hideRecycleBinModal={this.hideRecycleBinModal}
+          restoreFromTrash={this.restoreFromTrash}
+        />
+
+        {/* Render the file upload popup */}
+        <FileUploadPopup
+          show={showUploadPopup}
+          onClose={this.toggleUploadPopup}
+          onRestore={this.handleRestoreVault}
+        />
 
         <ScrollToTop smooth />
 

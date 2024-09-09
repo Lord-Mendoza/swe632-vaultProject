@@ -20,9 +20,12 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "removedocs": "rm -rf docs",
-    "postbuild": "rename build docs",
-    "build-deploy": "npm run removedocs && npm run build"
+    "removedocs": "if exist docs rmdir /s /q docs 2>null",
+    "removedocs-linux": "rm -rf docs",
+    "postbuild-windows": "rename build docs",
+    "postbuild-linux": "mv build docs",
+    "build-deploy": "npm run removedocs && npm run build && npm run postbuild-windows",
+    "build-deploy-linux": "npm run removedocs-linux && npm run build && npm run postbuild-linux"
   },
   "eslintConfig": {
     "extends": [

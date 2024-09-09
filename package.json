@@ -24,7 +24,7 @@
     "removedocs-linux": "rm -rf docs",
     "postbuild-windows": "rename build docs",
     "postbuild-linux": "mv build docs",
-    "build-deploy": "npm run removedocs && npm run build",
+    "build-deploy": "npm run removedocs && npm run build && npm run postbuild-windows",
     "build-deploy-linux": "npm run removedocs-linux && npm run build && npm run postbuild-linux"
   },
   "eslintConfig": {

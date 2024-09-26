@@ -308,6 +308,9 @@ class HomePageComponent extends React.Component {
         // Update the state with the new entries
         this.setState({entries: newEntries});
 
+        // Make the new entry active
+        this.changeActiveKey(new MouseEvent(''), { name: newKey });
+
         console.log(`Entry duplicated as ${newTitle}`);
     }
 

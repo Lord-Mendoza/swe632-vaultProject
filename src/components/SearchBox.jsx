@@ -1,6 +1,7 @@
 // starter code: https://ant.design/components/auto-complete
 import React, { useState } from 'react';
 import { AutoComplete, Input } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
 
 const searchResult = (query, data) => {
     const arr = Object.values(data)
@@ -80,7 +81,7 @@ const SearchBox = ({entries, onClickResult}) => {
             onSearch={handleSearch}
             size="large"
         >
-            <Input.Search size="large" placeholder="Search" enterButton/>
+            <Input size="large" placeholder="Search for an entry..." prefix={<SearchOutlined />}/>
         </AutoComplete>
     );
 };

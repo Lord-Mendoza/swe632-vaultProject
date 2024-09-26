@@ -2,8 +2,8 @@
 import React, { useState } from 'react';
 import { AutoComplete, Input } from 'antd';
 
-const searchResult = (query, data) =>
-    Object.values(data)
+const searchResult = (query, data) => {
+    const arr = Object.values(data)
         .map((entry) => {
             const fields = [entry.title, ...(entry.sections?.map((s) => s.content) ?? [])];
 
@@ -31,17 +31,41 @@ const searchResult = (query, data) =>
         })
         .filter((result) => result !== undefined);
 
+    // if empty, say no results found
+    if (arr.length === 0) {
+        arr.push({
+            value: '',
+            label: (
+                <div
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'space-between'
+                    }}
+                >
+                                <span>
+                                    No results found
+                                </span>
+                </div>
+            ),
+        });
+    }
+
+    return arr;
+}
+
 const SearchBox = ({entries, onClickResult}) => {
     const [options, setOptions] = useState([]);
     const handleSearch = (value) => {
         setOptions(value ? searchResult(value, entries) : []);
     };
     const onSelect = (value) => {
-        // find key whose object matches the title
-        // inefficient, but it'll work :)
-        for (let key in entries) {
-            if (entries[key].title === value) {
-                onClickResult(new MouseEvent(''), { name: key });
+        if (value !== '') {
+            // find key whose object matches the title
+            // inefficient, but it'll work :)
+            for (let key in entries) {
+                if (entries[key].title === value) {
+                    onClickResult(new MouseEvent(''), { name: key });
+                }
             }
         }
     };

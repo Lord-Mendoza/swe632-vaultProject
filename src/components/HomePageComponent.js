@@ -5,7 +5,7 @@ import "aos/dist/aos.css";
 import AOS from "aos";
 import Prism from "prismjs";
 import "../styling/prism.css";
-import {Switch} from "antd";
+import {Switch, Tooltip} from "antd";
 import ScrollToTop from "react-scroll-to-top";
 import {copyObject, isNotAnEmptyObject, isNotNullNorUndefined} from "../utilities/helpers/ObjectVariableFunctions";
 import {isNotAnEmptyArray} from "../utilities/helpers/ArrayVariableValidators";
@@ -499,24 +499,32 @@ class HomePageComponent extends React.Component {
                         {/* if not editing, show an edit button */}
                         {/* if editing, show a save button */}
                         {isEditing ? (
-                            <Button icon onClick={() => this.setState({isEditing: false})}>
-                                <Icon name="save"/>
-                            </Button>
+                            <Tooltip placement="top" title={'Save'} arrow={true}>
+                                <Button icon onClick={() => this.setState({isEditing: false})}>
+                                    <Icon name="save"/>
+                                </Button>
+                            </Tooltip>
                         ) : (
-                            <Button icon onClick={() => this.setState({isEditing: true})}>
-                                <Icon name="edit"/>
-                            </Button>
+                            <Tooltip placement="top" title={'Edit'} arrow={true}>
+                                <Button icon onClick={() => this.setState({isEditing: true})}>
+                                    <Icon name="edit"/>
+                                </Button>
+                            </Tooltip>
                         )}
 
                         {/* Delete Button next to Edit */}
-                        <Button icon onClick={() => this.handleDeleteEntry(activeKey)}>
-                            <Icon name="trash alternate"/>
-                        </Button>
+                        <Tooltip placement="top" title={'Delete'} arrow={true}>
+                            <Button icon onClick={() => this.handleDeleteEntry(activeKey)}>
+                                <Icon name="trash alternate"/>
+                            </Button>
+                        </Tooltip>
 
                         {/* Duplicate Button next to Delete */}
-                        <Button icon onClick={() => this.handleDuplicateEntry(activeKey)}>
-                            <Icon name="copy"/>
-                        </Button>
+                        <Tooltip placement="top" title={'Clone'} arrow={true}>
+                            <Button icon onClick={() => this.handleDuplicateEntry(activeKey)}>
+                                <Icon name="copy"/>
+                            </Button>
+                        </Tooltip>
                     </div>
                 </Segment>
             );

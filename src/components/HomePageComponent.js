@@ -294,17 +294,26 @@ class HomePageComponent extends React.Component {
 
     handleBackupVault = () => {
         const { entries } = this.state;
+    
+        // Prompt the user for a backup file name
+        const fileName = prompt("Enter the backup file name:", "vault-backup");
+    
+        // Use default if no file name is provided or if canceled
+        const backupFileName = fileName ? `${fileName}.json` : 'vault-backup.json';
+    
         const blob = new Blob([JSON.stringify(entries, null, 2)], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = 'vault-backup.json';
+        link.download = backupFileName; // Use the provided or default file name
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
-        console.log("Vault backed up to vault-backup.json");
+    
+        console.log(`Vault backed up to ${backupFileName}`);
     }
+    
 
     handleRestoreVault = (data) => {
         this.setState({ entries: data });

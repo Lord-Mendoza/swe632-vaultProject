@@ -20,6 +20,7 @@ import "../styling/DeleteButtonStyling.css"
 import RecycleBin from "./RecycleBin.js"
 import FileUploadPopup from "./FileUploadPopup.js"
 import SearchBox from "./SearchBox";
+import Moment from "moment";
 
 class HomePageComponent extends React.Component {
 
@@ -31,40 +32,7 @@ class HomePageComponent extends React.Component {
             darkMode = true;
 
         this.state = {
-            //TODO: Clear the dummy data and set entries to empty object
-            // entries: {},
-            entries: {
-                "entryOne": {
-                    "insertDate": "2024-09-02",
-                    "title": "First Entry",
-                    "sections": [
-                        {
-                            "sectionTitle": "Description",
-                            "content": "first entry"
-                        },
-                        {
-                            "sectionTitle": "Sample Code",
-                            "content": "public static void main(String[] args){}",
-                            "isCode": true
-                        }
-                    ]
-                },
-                "entryTwo": {
-                    "insertDate": "2024-08-01",
-                    "title": "Second Entry",
-                    "sections": [
-                        {
-                            "sectionTitle": "Description",
-                            "content": "second entry"
-                        },
-                        {
-                            "sectionTitle": "Sample Code",
-                            "content": "public static void main(String[] args){}",
-                            "isCode": true
-                        }
-                    ]
-                }
-            },
+            entries: {},
 
             darkMode,
             activeKey: "",
@@ -100,11 +68,7 @@ class HomePageComponent extends React.Component {
         this.setDarkModeToLocalStorage = this.setDarkModeToLocalStorage.bind(this);
         this.changeActiveKey = (e, {name}) => this.setState({activeKey: name});
         this.getCurrentDate = () => {
-            const today = new Date();
-            const year = today.getFullYear();
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const day = String(today.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
+            return Moment(new Date()).format('MMMM Do YYYY, h:mm:ss a');
         }
         this.toggleSidebar = openSidebar => {
             if (isNotNullNorUndefined(openSidebar))
@@ -164,6 +128,7 @@ class HomePageComponent extends React.Component {
             newEntries[entry["title"]] = refactoredEntry;
         } else {
             refactoredEntry["title"] = entry["title"];
+            refactoredEntry["insertDate"] = entry["insertDate"];
             refactoredEntry["updateDate"] = this.getCurrentDate();
             refactoredEntry["sections"] = [];
             Object.keys(entry)
@@ -198,7 +163,8 @@ class HomePageComponent extends React.Component {
                 ...entries,
                 [activeKey]: {
                     ...entries[activeKey],
-                    sections: updatedSections
+                    sections: updatedSections,
+                    updateDate: this.getCurrentDate()
                 }
             }
         });
@@ -253,20 +219,22 @@ class HomePageComponent extends React.Component {
     handleDeleteEntry = (entryKey) => {
         const {entries, trash} = this.state; // Get both entries and trash from state
 
-        // Move the entry to trash
-        const movedEntry = entries[entryKey];
-        this.setState({
-            trash: {
-                ...trash, // Keep the previous trash entries
-                [entryKey]: movedEntry, // Add the deleted entry to the trash
-            },
-            entries: Object.keys(entries).reduce((result, key) => {
-                if (key !== entryKey) {
-                    result[key] = entries[key]; // Keep only the non-deleted entries
-                }
-                return result;
-            }, {}),
-        });
+        if (window.confirm("Are you sure you want to delete this entry? You can retrieve it under Recycle Bin later.")) {
+            // Move the entry to trash
+            const movedEntry = entries[entryKey];
+            this.setState({
+                trash: {
+                    ...trash, // Keep the previous trash entries
+                    [entryKey]: movedEntry, // Add the deleted entry to the trash
+                },
+                entries: Object.keys(entries).reduce((result, key) => {
+                    if (key !== entryKey) {
+                        result[key] = entries[key]; // Keep only the non-deleted entries
+                    }
+                    return result;
+                }, {}),
+            });
+        }
     };
 
     // Method to show the Recycle Bin modal
@@ -338,13 +306,12 @@ class HomePageComponent extends React.Component {
 
     handleDeleteAllNotes = () => {
         // Confirm the action with the user
-        if (window.confirm("Are you sure you want to delete all notes? This action cannot be undone.")) {
+        if (window.confirm("Are you sure you want to delete all entries? This action cannot be undone.")) {
             // Clear all entries
             this.setState({entries: {}, trash: {}});
             console.log("All notes have been deleted.");
         }
     }
-
 
     render() {
         const {
@@ -536,7 +503,7 @@ class HomePageComponent extends React.Component {
         else {
             content = <Segment raised inverted={darkMode} style={{marginTop: "10px"}}>
                 <div className="center-screen">
-                    <h2>Select one of your entries to the left to start viewing its information here.</h2>
+                    <h2>Select an entry on the left to start viewing its information here.</h2>
                 </div>
             </Segment>
         }
@@ -564,10 +531,12 @@ class HomePageComponent extends React.Component {
 
                             {/* This is the "Manage Vault" Dropdown */}
                             <NavDropdown id="nav-dropdown" title="Manage Vault">
-                                
-                                <NavDropdown.Item onClick={this.handleBackupVault}>Backup Vault to File</NavDropdown.Item>
-                                <NavDropdown.Item onClick={this.toggleUploadPopup}>Restore Vault from File</NavDropdown.Item>
-                                
+
+                                <NavDropdown.Item onClick={this.handleBackupVault}>Backup Vault to
+                                    File</NavDropdown.Item>
+                                <NavDropdown.Item onClick={this.toggleUploadPopup}>Restore Vault from
+                                    File</NavDropdown.Item>
+
                                 <NavDropdown.Item onClick={this.handleDeleteAllNotes}>Delete All</NavDropdown.Item>
                             </NavDropdown>
 

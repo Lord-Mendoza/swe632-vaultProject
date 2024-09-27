@@ -1,19 +1,19 @@
 import React from "react";
-import {Col, Form, Nav, Navbar, NavDropdown, Row} from "react-bootstrap";
-import {Button, Icon, Menu, Segment, Sidebar} from "semantic-ui-react";
+import { Col, Form, Nav, Navbar, NavDropdown, Row } from "react-bootstrap";
+import { Button, Icon, Menu, Segment, Sidebar } from "semantic-ui-react";
 import "aos/dist/aos.css";
 import AOS from "aos";
 import Prism from "prismjs";
 import "../styling/prism.css";
-import {Switch, Tooltip} from "antd";
+import { Switch, Tooltip } from "antd";
 import ScrollToTop from "react-scroll-to-top";
-import {copyObject, isNotAnEmptyObject, isNotNullNorUndefined} from "../utilities/helpers/ObjectVariableFunctions";
-import {isNotAnEmptyArray} from "../utilities/helpers/ArrayVariableValidators";
+import { copyObject, isNotAnEmptyObject, isNotNullNorUndefined } from "../utilities/helpers/ObjectVariableFunctions";
+import { isNotAnEmptyArray } from "../utilities/helpers/ArrayVariableValidators";
 import "../styling/HomePageComponent.css";
 import "../styling/ComponentStyling.css";
 import EntryComponent from "./EntryComponent";
-import {ConstantStrings} from "../utilities/constants/ConstantStrings";
-import {isNotEmptyString} from "../utilities/helpers/StringVariableValidators";
+import { ConstantStrings } from "../utilities/constants/ConstantStrings";
+import { isNotEmptyString } from "../utilities/helpers/StringVariableValidators";
 import AIChatBot from "./AIChatBot.tsx";
 import "../styling/BotToggle.css"
 import "../styling/DeleteButtonStyling.css"
@@ -71,22 +71,22 @@ class HomePageComponent extends React.Component {
         this.changeEntries = this.changeEntries.bind(this);
         this.copyToClipboard = this.copyToClipboard.bind(this);
         this.setDarkModeToLocalStorage = this.setDarkModeToLocalStorage.bind(this);
-        this.changeActiveKey = (e, {name}) => this.setState({activeKey: name});
+        this.changeActiveKey = (e, { name }) => this.setState({ activeKey: name });
         this.getCurrentDate = () => {
             return Moment(new Date()).format('MMMM Do YYYY, h:mm:ss a');
         }
         this.toggleSidebar = openSidebar => {
             if (isNotNullNorUndefined(openSidebar))
-                this.setState({showSidebar: openSidebar});
+                this.setState({ showSidebar: openSidebar });
             else
-                this.setState({showSidebar: !this.state.showSidebar});
+                this.setState({ showSidebar: !this.state.showSidebar });
         }
-        this.showCreateEditEntryPopup = entryType => this.setState({showCreateEditEntryPopup: true, entryType})
+        this.showCreateEditEntryPopup = entryType => this.setState({ showCreateEditEntryPopup: true, entryType })
         this.closeCreateEditEntryPopup = () => {
-            this.setState({showCreateEditEntryPopup: false, entryType: ""}, this.saveEntriesToLocalStorage)
+            this.setState({ showCreateEditEntryPopup: false, entryType: "" }, this.saveEntriesToLocalStorage)
         }
         this.saveEntriesToLocalStorage = () => {
-            const {entries} = this.state;
+            const { entries } = this.state;
 
             localStorage.setItem("entries", JSON.stringify(entries));
         }
@@ -112,12 +112,12 @@ class HomePageComponent extends React.Component {
     };
 
     setDarkModeToLocalStorage() {
-        const {darkMode} = this.state;
+        const { darkMode } = this.state;
         localStorage.setItem("isDarkMode", darkMode === true ? "true" : "false");
     }
 
     changeEntries(entry) {
-        const {entries, entryType} = this.state;
+        const { entries, entryType } = this.state;
         let newEntries = copyObject(entries);
 
         let refactoredEntry = {};
@@ -155,15 +155,15 @@ class HomePageComponent extends React.Component {
             newEntries[entry["title"]] = refactoredEntry;
         }
 
-        this.setState({entries: newEntries}, this.closeCreateEditEntryPopup);
+        this.setState({ entries: newEntries }, this.closeCreateEditEntryPopup);
     };
 
     // Andy's Implementation for Edit
     handleContentChange = (sectionIndex, value) => {
-        const {activeKey, entries} = this.state;
+        const { activeKey, entries } = this.state;
         const updatedSections = entries[activeKey].sections.map((section, index) => {
             if (index === sectionIndex) {
-                return {...section, content: value};
+                return { ...section, content: value };
             }
             return section;
         });
@@ -182,7 +182,7 @@ class HomePageComponent extends React.Component {
 
     // Andy's Implementation for Edit Titles
     handleTitleChange = (value) => {
-        const {activeKey, entries} = this.state;
+        const { activeKey, entries } = this.state;
 
         this.setState({
             entries: {
@@ -204,30 +204,30 @@ class HomePageComponent extends React.Component {
 
     // Method to move an entry to the trash
     moveToTrash = (entryKey) => {
-        const {entries, trash} = this.state;
+        const { entries, trash } = this.state;
 
         // Move entry from entries to trash
         this.setState({
             entries: Object.fromEntries(Object.entries(entries).filter(([key]) => key !== entryKey)),
-            trash: {...trash, [entryKey]: entries[entryKey]},
+            trash: { ...trash, [entryKey]: entries[entryKey] },
         });
 
     };
 
     // Method to restore an entry from the trash
     restoreFromTrash = (entryKey) => {
-        const {entries, trash} = this.state;
+        const { entries, trash } = this.state;
 
         // Move entry from trash back to entries
         this.setState({
             trash: Object.fromEntries(Object.entries(trash).filter(([key]) => key !== entryKey)),
-            entries: {...entries, [entryKey]: trash[entryKey]},
+            entries: { ...entries, [entryKey]: trash[entryKey] },
         });
     };
 
     // Handle delete and move to recycle
     handleDeleteEntry = (entryKey) => {
-        const {entries, trash} = this.state; // Get both entries and trash from state
+        const { entries, trash } = this.state; // Get both entries and trash from state
 
         if (window.confirm("Are you sure you want to delete this entry? You can retrieve it under Recycle Bin later.")) {
             // Move the entry to trash
@@ -249,16 +249,16 @@ class HomePageComponent extends React.Component {
 
     // Method to show the Recycle Bin modal
     showRecycleBinModal = () => {
-        this.setState({showRecycleBinModal: true});
+        this.setState({ showRecycleBinModal: true });
     };
 
     // Method to hide the Recycle Bin modal
     hideRecycleBinModal = () => {
-        this.setState({showRecycleBinModal: false});
+        this.setState({ showRecycleBinModal: false });
     };
 
     handleDuplicateEntry = (key) => {
-        const {entries} = this.state;
+        const { entries } = this.state;
 
         // Ensure the entry exists
         if (!entries[key]) {
@@ -284,17 +284,17 @@ class HomePageComponent extends React.Component {
         };
 
         // Update the state with the new entries
-        this.setState({entries: newEntries});
+        this.setState({ entries: newEntries });
 
         // Make the new entry active
-        this.changeActiveKey(new MouseEvent(''), {name: newKey});
+        this.changeActiveKey(new MouseEvent(''), { name: newKey });
 
         console.log(`Entry duplicated as ${newTitle}`);
     }
 
     handleBackupVault = () => {
-        const {entries} = this.state;
-        const blob = new Blob([JSON.stringify(entries, null, 2)], {type: 'application/json'});
+        const { entries } = this.state;
+        const blob = new Blob([JSON.stringify(entries, null, 2)], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
@@ -307,19 +307,19 @@ class HomePageComponent extends React.Component {
     }
 
     handleRestoreVault = (data) => {
-        this.setState({entries: data});
+        this.setState({ entries: data });
         console.log("Vault restored from file");
     }
 
     toggleUploadPopup = () => {
-        this.setState(prevState => ({showUploadPopup: !prevState.showUploadPopup}));
+        this.setState(prevState => ({ showUploadPopup: !prevState.showUploadPopup }));
     }
 
     handleDeleteAllNotes = () => {
         // Confirm the action with the user
         if (window.confirm("Are you sure you want to delete all entries? This action cannot be undone.")) {
             // Clear all entries
-            this.setState({entries: {}, trash: {}});
+            this.setState({ entries: {}, trash: {} });
             console.log("All notes have been deleted.");
         }
     }
@@ -337,12 +337,12 @@ class HomePageComponent extends React.Component {
 
         let style = {};
         if (darkMode === true)
-            style = {backgroundColor: "#222222", color: "white"};
+            style = { backgroundColor: "#222222", color: "white" };
 
         let sidebarButton, sidebarVisibility, sidebarAnimation, sidebarPusherFunc, contentDim, sidebarClassName;
         if (window.screen.width <= 1250) {
             sidebarButton = !showSidebar && <Button icon onClick={this.toggleSidebar} className={"sideMenuToggleBtn"}>
-                <Icon name={"chevron right"}/>
+                <Icon name={"chevron right"} />
             </Button>;
             sidebarAnimation = "overlay";
             sidebarVisibility = showSidebar;
@@ -380,8 +380,8 @@ class HomePageComponent extends React.Component {
                     let item = entries[entry];
 
                     menuOptions.push(<Menu.Item name={entry}
-                                                active={activeKey === entry}
-                                                onClick={this.changeActiveKey}>
+                        active={activeKey === entry}
+                        onClick={this.changeActiveKey}>
                         <Menu.Header>{item["title"]}</Menu.Header>
                         <p1>{item["insertDate"]}</p1>
                     </Menu.Item>);
@@ -393,7 +393,7 @@ class HomePageComponent extends React.Component {
         if (entries.hasOwnProperty(activeKey)
             && isNotAnEmptyObject(entries[activeKey])) {
 
-            let {title, insertDate, updateDate, sections} = entries[activeKey];
+            let { title, insertDate, updateDate, sections } = entries[activeKey];
 
             let entryContents = [];
 
@@ -403,16 +403,16 @@ class HomePageComponent extends React.Component {
                 // Note, this code treats each section individually.
                 // IDK how index is working here
                 entryContents = sections.map((section, index) => {
-                    const {sectionTitle, content, isCode} = section;
+                    const { sectionTitle, content, isCode } = section;
 
                     // if a section isCode, just display
                     //if !isCode, then display a text area
                     let renderedContent = isCode
                         ? (<section className={"codeSample"}>
-                                <pre className="language-javascript">
-                                    <code>{content}</code>
-                                </pre>
-                            </section>
+                            <pre className="language-javascript">
+                                <code>{content}</code>
+                            </pre>
+                        </section>
                         ) : (
                             // this segment styling is not applying?
                             <Segment raised inverted={darkMode}>
@@ -429,7 +429,7 @@ class HomePageComponent extends React.Component {
 
                     // Display title and content for each section
                     return (
-                        <Row noGutters style={{paddingBottom: ".5em", paddingLeft: "2em"}} key={index}>
+                        <Row noGutters style={{ paddingBottom: ".5em", paddingLeft: "2em" }} key={index}>
                             <Col xs={1}>{sectionTitle}</Col>
                             <Col xs={11}>{renderedContent}</Col>
                         </Row>
@@ -439,8 +439,8 @@ class HomePageComponent extends React.Component {
 
             // why is content defined here, shouldn't it be defined before it is used in line 263?
             content = (
-                <Segment raised inverted={darkMode} style={{marginTop: "10px"}}>
-                    <Row noGutters style={{paddingBottom: ".5em", paddingLeft: "1em"}}>
+                <Segment raised inverted={darkMode} style={{ marginTop: "10px" }}>
+                    <Row noGutters style={{ paddingBottom: ".5em", paddingLeft: "1em" }}>
                         {/* is isEditing is true, the title becomes an editable text field */}
                         {isEditing ? (
                             <Form.Group>
@@ -462,12 +462,12 @@ class HomePageComponent extends React.Component {
 
                     {/* Shows Date on view*/}
                     {!isEditing && isNotNullNorUndefined(insertDate) &&
-                        <Row noGutters style={{paddingLeft: "1em"}}>
+                        <Row noGutters style={{ paddingLeft: "1em" }}>
                             <h6>Last Updated: {isNotNullNorUndefined(updateDate) ? updateDate : insertDate}</h6>
                         </Row>}
 
                     {!isEditing && isNotNullNorUndefined(insertDate) &&
-                        <Row noGutters style={{paddingBottom: ".5em", paddingLeft: "1em"}}>
+                        <Row noGutters style={{ paddingBottom: ".5em", paddingLeft: "1em" }}>
                             <h6>Added: {insertDate}</h6>
                         </Row>
                     }
@@ -481,14 +481,14 @@ class HomePageComponent extends React.Component {
                         {/* if editing, show a save button */}
                         {isEditing ? (
                             <Tooltip placement="top" title={'Save'} arrow={true}>
-                                <Button icon onClick={() => this.setState({isEditing: false})}>
-                                    <Icon name="save"/>
+                                <Button icon onClick={() => this.setState({ isEditing: false })}>
+                                    <Icon name="save" />
                                 </Button>
                             </Tooltip>
                         ) : (
                             <Tooltip placement="top" title={'Edit'} arrow={true}>
-                                <Button icon onClick={() => this.setState({isEditing: true})}>
-                                    <Icon name="edit"/>
+                                <Button icon onClick={() => this.setState({ isEditing: true })}>
+                                    <Icon name="edit" />
                                 </Button>
                             </Tooltip>
                         )}
@@ -496,14 +496,14 @@ class HomePageComponent extends React.Component {
                         {/* Delete Button next to Edit */}
                         <Tooltip placement="top" title={'Delete'} arrow={true}>
                             <Button icon onClick={() => this.handleDeleteEntry(activeKey)}>
-                                <Icon name="trash alternate"/>
+                                <Icon name="trash alternate" />
                             </Button>
                         </Tooltip>
 
                         {/* Duplicate Button next to Delete */}
                         <Tooltip placement="top" title={'Clone'} arrow={true}>
                             <Button icon onClick={() => this.handleDuplicateEntry(activeKey)}>
-                                <Icon name="copy"/>
+                                <Icon name="copy" />
                             </Button>
                         </Tooltip>
                     </div>
@@ -512,7 +512,7 @@ class HomePageComponent extends React.Component {
         }
         //else, show default selection screen
         else {
-            content = <Segment raised inverted={darkMode} style={{marginTop: "10px"}}>
+            content = <Segment raised inverted={darkMode} style={{ marginTop: "10px" }}>
                 <div className="center-screen">
                     <h2>Select an entry on the left to start viewing its information here.</h2>
                 </div>
@@ -522,13 +522,13 @@ class HomePageComponent extends React.Component {
         return (
             <div>
                 {/* This is the navbar at the top of the page */}
-                <Navbar sticky="top" collapseOnSelect expand="lg" bg="dark" variant="dark" style={{padding: "10px"}}>
+                <Navbar sticky="top" collapseOnSelect expand="lg" bg="dark" variant="dark" style={{ padding: "10px" }}>
                     <Navbar.Brand>
-                        <img src={"logo.png"} style={{height: "24px", width: "24px", marginRight: "5px"}}
-                             alt={"vault logo"}/>
-                        <span style={{verticalAlign: "text-bottom"}}>Vault</span>
+                        <img src={"logo.png"} style={{ height: "24px", width: "24px", marginRight: "5px" }}
+                            alt={"vault logo"} />
+                        <span style={{ verticalAlign: "text-bottom" }}>Vault</span>
                     </Navbar.Brand>
-                    <Navbar.Toggle aria-controls="basic-navbar-nav"/>
+                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <SearchBox
                             entries={this.state.entries}
@@ -558,11 +558,11 @@ class HomePageComponent extends React.Component {
                         </Nav>
                     </Navbar.Collapse>
 
-                    <div style={{padding: ".5rem 1rem"}}>
+                    <div style={{ padding: ".5rem 1rem" }}>
                         <span className={"darkModeLabel"}> Dark Mode: &nbsp;</span>
                         <Switch
-                            checkedChildren={<Icon name="moon"/>}
-                            unCheckedChildren={<Icon name="sun" inverted/>}
+                            checkedChildren={<Icon name="moon" />}
+                            unCheckedChildren={<Icon name="sun" inverted />}
                             checked={darkMode}
                             onChange={() => this.setState({
                                 darkMode: !darkMode
@@ -571,27 +571,27 @@ class HomePageComponent extends React.Component {
                     </div>
                 </Navbar>
 
-                <div style={{marginTop: "-10px", paddingBottom: "15px", ...style}}
-                     className={darkMode === true ? "darkMode" : ""}>
-                    <div style={{margin: 0}} className={"homePageComponent " + sidebarClassName}>
+                <div style={{ marginTop: "-10px", paddingBottom: "15px", ...style }}
+                    className={darkMode === true ? "darkMode" : ""}>
+                    <div style={{ margin: 0 }} className={"homePageComponent " + sidebarClassName}>
                         <Sidebar.Pushable as={Segment} className={"sidebarBody"}>
                             {sidebarButton}
 
                             <Sidebar as={Menu}
-                                     animation={sidebarAnimation}
-                                     direction={"left"}
-                                     inverted={darkMode}
-                                     vertical
-                                     visible={sidebarVisibility}
-                                     className={sidebarClassName}
+                                animation={sidebarAnimation}
+                                direction={"left"}
+                                inverted={darkMode}
+                                vertical
+                                visible={sidebarVisibility}
+                                className={sidebarClassName}
                             >
                                 {menuOptions}
                             </Sidebar>
 
                             <Sidebar.Pusher dimmed={contentDim}
-                                            onClick={sidebarPusherFunc}
-                                            className={"sidebarContent"}>
-                                <div style={{minHeight: "100vh"}}>
+                                onClick={sidebarPusherFunc}
+                                className={"sidebarContent"}>
+                                <div style={{ minHeight: "100vh" }}>
                                     {content}
                                 </div>
                             </Sidebar.Pusher>
@@ -600,20 +600,20 @@ class HomePageComponent extends React.Component {
                 </div>
 
                 {showCreateEditEntryPopup && <EntryComponent entry={entry}
-                                                             changeEntries={this.changeEntries}
-                                                             entryType={entryType}
-                                                             closePopup={this.closeCreateEditEntryPopup}/>}
+                    changeEntries={this.changeEntries}
+                    entryType={entryType}
+                    closePopup={this.closeCreateEditEntryPopup} />}
 
 
                 {/* ChatBot Button */}
                 <button className="chatbot-toggle-button" onClick={this.toggleChatBot}>
-                    Chat
+                    {isChatBotVisible ? 'Close' : 'Chat'}
                 </button>
 
                 {/* ChatBot Component, pass entries as props */}
                 {isChatBotVisible && (
                     <div className="chatbot-container">
-                        <AIChatBot entries={entries} darkMode={darkMode}/>
+                        <AIChatBot entries={entries} darkMode={darkMode} />
                     </div>
                 )}
 
@@ -632,7 +632,7 @@ class HomePageComponent extends React.Component {
                     onRestore={this.handleRestoreVault}
                 />
 
-                <ScrollToTop smooth/>
+                <ScrollToTop smooth />
 
             </div>
         )

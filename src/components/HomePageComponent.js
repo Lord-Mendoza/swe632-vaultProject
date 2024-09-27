@@ -31,8 +31,13 @@ class HomePageComponent extends React.Component {
         if (localStorage.getItem("isDarkMode") === "true")
             darkMode = true;
 
+        let entries = {};
+        let entriesFromCache = JSON.parse(localStorage.getItem("entries"));
+        if (isNotAnEmptyObject(entriesFromCache))
+            entries = copyObject(entriesFromCache);
+
         this.state = {
-            entries: {},
+            entries,
 
             darkMode,
             activeKey: "",
@@ -77,8 +82,14 @@ class HomePageComponent extends React.Component {
                 this.setState({showSidebar: !this.state.showSidebar});
         }
         this.showCreateEditEntryPopup = entryType => this.setState({showCreateEditEntryPopup: true, entryType})
-        this.closeCreateEditEntryPopup = () => this.setState({showCreateEditEntryPopup: false, entryType: ""})
+        this.closeCreateEditEntryPopup = () => {
+            this.setState({showCreateEditEntryPopup: false, entryType: ""}, this.saveEntriesToLocalStorage)
+        }
+        this.saveEntriesToLocalStorage = () => {
+            const {entries} = this.state;
 
+            localStorage.setItem("entries", JSON.stringify(entries));
+        }
     }
 
     componentDidMount() {
@@ -144,7 +155,6 @@ class HomePageComponent extends React.Component {
             newEntries[entry["title"]] = refactoredEntry;
         }
 
-
         this.setState({entries: newEntries}, this.closeCreateEditEntryPopup);
     };
 
@@ -167,7 +177,7 @@ class HomePageComponent extends React.Component {
                     updateDate: this.getCurrentDate()
                 }
             }
-        });
+        }, this.saveEntriesToLocalStorage);
     };
 
     // Andy's Implementation for Edit Titles
@@ -277,7 +287,7 @@ class HomePageComponent extends React.Component {
         this.setState({entries: newEntries});
 
         // Make the new entry active
-        this.changeActiveKey(new MouseEvent(''), { name: newKey });
+        this.changeActiveKey(new MouseEvent(''), {name: newKey});
 
         console.log(`Entry duplicated as ${newTitle}`);
     }
@@ -300,6 +310,7 @@ class HomePageComponent extends React.Component {
         this.setState({entries: data});
         console.log("Vault restored from file");
     }
+
     toggleUploadPopup = () => {
         this.setState(prevState => ({showUploadPopup: !prevState.showUploadPopup}));
     }

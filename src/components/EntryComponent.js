@@ -3,6 +3,7 @@ import {ConstantStrings} from "../utilities/constants/ConstantStrings";
 import {Button} from "semantic-ui-react";
 import {Component} from "react";
 import {copyObject} from "../utilities/helpers/ObjectVariableFunctions";
+import {isNotEmptyString} from "../utilities/helpers/StringVariableValidators";
 
 class EntryComponent extends Component {
     constructor(props) {
@@ -13,6 +14,7 @@ class EntryComponent extends Component {
         }
 
         this.handleFormInput = this.handleFormInput.bind(this);
+        this.validateFields = this.validateFields.bind(this);
     }
 
     handleFormInput(e){
@@ -28,6 +30,17 @@ class EntryComponent extends Component {
         this.setState({entry: newEntry});
     }
 
+    validateFields() {
+        const {entry} = this.state;
+        const {title, description} = entry;
+
+        if (isNotEmptyString(title) && isNotEmptyString(description)) {
+            this.props["changeEntries"](entry)
+        } else {
+            alert("Please fill in all required fields before submitting.")
+        }
+    }
+
     render() {
         const {entry} = this.state;
 
@@ -41,7 +54,7 @@ class EntryComponent extends Component {
             <Modal.Body>
                 <Form>
                     <Form.Group className="mb-3" controlId="title">
-                        <Form.Label>Title</Form.Label>
+                        <Form.Label><b><span style={{color: '#db2828'}}>*</span></b> Title</Form.Label>
                         <Form.Control name="title" type="text" placeholder="Title"
                                       onChange={this.handleFormInput}
                                       value={entry["title"]}
@@ -49,7 +62,7 @@ class EntryComponent extends Component {
                     </Form.Group>
 
                     <Form.Group className="mb-3" controlId="description">
-                        <Form.Label>Description</Form.Label>
+                        <Form.Label><b><span style={{color: '#db2828'}}>*</span></b> Description</Form.Label>
                         <Form.Control name="description" as="textarea" placeholder="Description"
                                       onChange={this.handleFormInput}
                                       value={entry["description"]}
@@ -67,7 +80,7 @@ class EntryComponent extends Component {
                     Close
                 </Button>
 
-                <Button variant="primary" onClick={() => this.props["changeEntries"](entry)}>
+                <Button variant="primary" onClick={this.validateFields}>
                     Save Changes
                 </Button>
             </Modal.Footer>

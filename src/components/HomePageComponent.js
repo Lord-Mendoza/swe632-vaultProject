@@ -94,6 +94,10 @@ class HomePageComponent extends React.Component {
 
     componentDidMount() {
         Prism.highlightAll();
+        window.addEventListener('keydown', this.handleKeyDown);
+    }
+    componentWillUnmount() {
+        window.removeEventListener('keydown', this.handleKeyDown);
     }
 
     handleSelection(e) {
@@ -109,7 +113,7 @@ class HomePageComponent extends React.Component {
         this.setState({
             copySuccess: "Copied!"
         })
-    };
+    }
 
     setDarkModeToLocalStorage() {
         const { darkMode } = this.state;
@@ -156,7 +160,7 @@ class HomePageComponent extends React.Component {
         }
 
         this.setState({ entries: newEntries }, this.closeCreateEditEntryPopup);
-    };
+    }
 
     // Andy's Implementation for Edit
     handleContentChange = (sectionIndex, value) => {
@@ -178,7 +182,7 @@ class HomePageComponent extends React.Component {
                 }
             }
         }, this.saveEntriesToLocalStorage);
-    };
+    }
 
     // Andy's Implementation for Edit Titles
     handleTitleChange = (value) => {
@@ -193,14 +197,14 @@ class HomePageComponent extends React.Component {
                 }
             }
         });
-    };
+    }
 
     // Used to Hide or show AI ChatBot window
     toggleChatBot = () => {
         this.setState((prevState) => ({
             isChatBotVisible: !prevState.isChatBotVisible,
         }));
-    };
+    }
 
     // Method to move an entry to the trash
     moveToTrash = (entryKey) => {
@@ -212,7 +216,7 @@ class HomePageComponent extends React.Component {
             trash: { ...trash, [entryKey]: entries[entryKey] },
         });
 
-    };
+    }
 
     // Method to restore an entry from the trash
     restoreFromTrash = (entryKey) => {
@@ -223,7 +227,7 @@ class HomePageComponent extends React.Component {
             trash: Object.fromEntries(Object.entries(trash).filter(([key]) => key !== entryKey)),
             entries: { ...entries, [entryKey]: trash[entryKey] },
         });
-    };
+    }
 
     // Handle delete and move to recycle
     handleDeleteEntry = (entryKey) => {
@@ -245,17 +249,17 @@ class HomePageComponent extends React.Component {
                 }, {}),
             });
         }
-    };
+    }
 
     // Method to show the Recycle Bin modal
     showRecycleBinModal = () => {
         this.setState({ showRecycleBinModal: true });
-    };
+    }
 
     // Method to hide the Recycle Bin modal
     hideRecycleBinModal = () => {
         this.setState({ showRecycleBinModal: false });
-    };
+    }
 
     handleDuplicateEntry = (key) => {
         const { entries } = this.state;
@@ -330,6 +334,23 @@ class HomePageComponent extends React.Component {
             // Clear all entries
             this.setState({ entries: {}, trash: {} });
             console.log("All notes have been deleted.");
+        }
+    }
+
+    
+
+    // Up/Down Arrow Key navigates to previous/next notes list
+    handleKeyDown = (e) => {
+        const { entries, activeKey } = this.state;
+        const entryKeys = Object.keys(entries);
+        const currentIndex = entryKeys.indexOf(activeKey);
+    
+        if (e.key === 'ArrowDown') {
+            const nextIndex = currentIndex + 1 < entryKeys.length ? currentIndex + 1 : currentIndex;
+            this.setState({ activeKey: entryKeys[nextIndex] });
+        } else if (e.key === 'ArrowUp') {
+            const prevIndex = currentIndex - 1 >= 0 ? currentIndex - 1 : currentIndex;
+            this.setState({ activeKey: entryKeys[prevIndex] });
         }
     }
 

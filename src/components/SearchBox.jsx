@@ -9,7 +9,7 @@ const searchResult = (query, data) => {
             const fields = [entry.title, ...(entry.sections?.map((s) => s.content) ?? [])];
 
             for (const field of fields) {
-                if (field?.toLowerCase().includes(query)) {
+                if (field?.toLowerCase().includes(query.toLowerCase())) {
                     return {
                         value: `${entry.title}`,
                         label: (

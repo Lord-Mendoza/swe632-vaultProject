@@ -92,6 +92,11 @@ a.carousel-control-prev:hover, a.carousel-control-next:hover {
     min-height: 100px;
 }
 
+.codeSample {
+    padding: 0;
+    min-height: 100px;
+}
+
 .darkMode .description {
     color: white;
 }

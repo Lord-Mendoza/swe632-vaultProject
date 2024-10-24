@@ -82,6 +82,7 @@ class EntryComponent extends Component {
                         <Form.Check name="isCode" type="checkbox" label="Format as code?"
                                     onChange={this.handleFormInput}
                                     checked={entry["isCode"]}
+                                    style={{paddingTop: "10px"}}
                         />
                     </Form.Group>
                 </Form>

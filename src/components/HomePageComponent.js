@@ -1,5 +1,5 @@
 import React from "react";
-import {Col, Form, Nav, Navbar, NavDropdown, Row} from "react-bootstrap";
+import {Col, Container, Form, Nav, Navbar, NavDropdown, Row} from "react-bootstrap";
 import {Button, Icon, Menu, Segment, Sidebar} from "semantic-ui-react";
 import "aos/dist/aos.css";
 import AOS from "aos";
@@ -113,20 +113,31 @@ class HomePageComponent extends React.Component {
         const {entries, entryType} = this.state;
         let newEntries = copyObject(entries);
 
-        let refactoredEntry = {};
-        refactoredEntry["title"] = entry["title"];
-        refactoredEntry["description"] = entry["description"];
-        refactoredEntry["isCode"] = entry["isCode"];
+        let duplicateEntryName = false;
+        Object.keys(entries).forEach(entryTitle => {
+            if (entryTitle === entry["title"]) {
+                duplicateEntryName = true;
+            }
+        })
 
-        if (entryType === ConstantStrings.createStr) {
-            refactoredEntry["insertDate"] = this.getCurrentDate();
+        if (duplicateEntryName) {
+            alert("The title for this new entry already exists. Please input another title.")
         } else {
-            refactoredEntry["insertDate"] = entry["insertDate"];
-            refactoredEntry["updateDate"] = this.getCurrentDate();
-        }
-        newEntries[entry["title"]] = refactoredEntry;
+            let refactoredEntry = {};
+            refactoredEntry["title"] = entry["title"];
+            refactoredEntry["description"] = entry["description"];
+            refactoredEntry["isCode"] = entry["isCode"];
 
-        this.setState({entries: newEntries}, this.closeCreateEditEntryPopup);
+            if (entryType === ConstantStrings.createStr) {
+                refactoredEntry["insertDate"] = this.getCurrentDate();
+            } else {
+                refactoredEntry["insertDate"] = entry["insertDate"];
+                refactoredEntry["updateDate"] = this.getCurrentDate();
+            }
+            newEntries[entry["title"]] = refactoredEntry;
+
+            this.setState({entries: newEntries}, this.closeCreateEditEntryPopup);
+        }
     }
 
     // Used to Hide or show AI ChatBot window
@@ -354,86 +365,71 @@ class HomePageComponent extends React.Component {
 
             let {title, insertDate, updateDate, description, isCode} = entries[activeKey];
 
-            let renderedContent = isCode
-                ? (<section className={"codeSample"}>
-                        <pre className="language-javascript">
-                            <code>{description}</code>
-                        </pre>
-                    </section>
-                ) : (
-                    <Form.Control
-                        plaintext readOnly
-                        name="description" as="textarea"
-                        value={description}
-                        className={darkMode ? "darkMode description" : ""}
-                    />
-                );
-
             // why is content defined here, shouldn't it be defined before it is used in line 263?
             content = (
                 <Segment raised inverted={darkMode} style={{marginTop: "10px"}}>
-                    <Row noGutters style={{paddingBottom: ".5em", paddingLeft: "1em"}}>
-                        {/* is isEditing is true, the title becomes an editable text field */}
-                        {isEditing ? (
-                            <Form.Group>
-                                <Form.Label>Entry Title</Form.Label>
-                                <Form.Control
-                                    type="text" placeholder={"Entry Title"}
-                                    // updates when user types
-                                    onChange={(e) => this.handleTitleChange(e.target.value)}
-                                    value={title}
-                                    // Disable editing when not in editing mode
-                                    disabled={!isEditing}
-                                />
-                            </Form.Group>
-                        ) : (
-                            // otherwise, just shows the title
-                            <h4>{title}</h4>
-                        )}
-                    </Row>
-
-                    {/* Shows Date on view*/}
-                    {!isEditing && isNotNullNorUndefined(insertDate) &&
-                        <Row noGutters style={{paddingLeft: "1em"}}>
-                            <h6>Last Updated: {isNotNullNorUndefined(updateDate) ? updateDate : insertDate}</h6>
-                        </Row>}
-
-                    {!isEditing && isNotNullNorUndefined(insertDate) &&
+                    <Container fluid>
                         <Row noGutters style={{paddingBottom: ".5em", paddingLeft: "1em"}}>
-                            <h6>Added: {insertDate}</h6>
+                            <h4>{title}</h4>
                         </Row>
-                    }
 
-                    {/* Description field */}
-                    <Row noGutters style={{paddingBottom: ".5em", paddingLeft: "2em"}}>
-                        <Col xs={1}>Description</Col>
-                        <Col xs={11}>{renderedContent}</Col>
-                    </Row>
+                        {/* Shows Date on view*/}
+                        {!isEditing && isNotNullNorUndefined(insertDate) &&
+                            <Row noGutters style={{paddingLeft: "1em"}}>
+                                <h6>Last Updated: {isNotNullNorUndefined(updateDate) ? updateDate : insertDate}</h6>
+                            </Row>}
 
-                    {/* Show Edit/Save and Delete */}
-                    <div>
-                        {/* Edit Button */}
-                        <Tooltip placement="top" title={'Edit'} arrow={true}>
-                            <Button icon
-                                    onClick={() => this.showCreateEditEntryPopup(ConstantStrings.editStr, entries[activeKey])}>
-                                <Icon name="edit"/>
-                            </Button>
-                        </Tooltip>
+                        {!isEditing && isNotNullNorUndefined(insertDate) &&
+                            <Row noGutters style={{paddingBottom: ".5em", paddingLeft: "1em"}}>
+                                <h6>Added: {insertDate}</h6>
+                            </Row>
+                        }
 
-                        {/* Duplicate Button next to Delete */}
-                        <Tooltip placement="top" title={'Clone'} arrow={true}>
-                            <Button icon onClick={() => this.handleDuplicateEntry(activeKey)}>
-                                <Icon name="copy"/>
-                            </Button>
-                        </Tooltip>
+                        {/* Description field */}
+                        <Row noGutters style={{padding: "0 2em .5em 2em"}}>
+                            {isCode ? (
+                                <section className={"codeSample"}>
+                                    <pre className="language-javascript">
+                                        <code>{description}</code>
+                                    </pre>
+                                </section>
+                            ) : (
+                                <Segment raised inverted={darkMode}>
+                                    <Form.Control
+                                        plaintext readOnly
+                                        name="description" as="textarea"
+                                        value={description}
+                                        className={darkMode ? "darkMode description" : ""}
+                                    />
+                                </Segment>
+                            )}
+                        </Row>
 
-                        {/* Delete Button next to Edit */}
-                        <Tooltip placement="top" title={'Delete'} arrow={true}>
-                            <Button icon color="red" onClick={() => this.handleDeleteEntry(activeKey)}>
-                                <Icon name="trash alternate"/>
-                            </Button>
-                        </Tooltip>
-                    </div>
+                        {/* Show Edit/Save and Delete */}
+                        <div style={{paddingTop: "10px"}}>
+                            {/* Edit Button */}
+                            <Tooltip placement="bottom" title={'Edit'} arrow={true}>
+                                <Button icon
+                                        onClick={() => this.showCreateEditEntryPopup(ConstantStrings.editStr, entries[activeKey])}>
+                                    <Icon name="edit"/>
+                                </Button>
+                            </Tooltip>
+
+                            {/* Duplicate Button next to Delete */}
+                            <Tooltip placement="bottom" title={'Clone'} arrow={true}>
+                                <Button icon onClick={() => this.handleDuplicateEntry(activeKey)}>
+                                    <Icon name="copy"/>
+                                </Button>
+                            </Tooltip>
+
+                            {/* Delete Button next to Edit */}
+                            <Tooltip placement="bottom" title={'Delete'} arrow={true}>
+                                <Button icon color="red" onClick={() => this.handleDeleteEntry(activeKey)}>
+                                    <Icon name="trash alternate"/>
+                                </Button>
+                            </Tooltip>
+                        </div>
+                    </Container>
                 </Segment>
             );
         }

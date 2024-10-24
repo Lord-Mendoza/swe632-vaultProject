@@ -1,5 +1,5 @@
 import React from "react";
-import {Col, Container, Form, Nav, Navbar, NavDropdown, Row} from "react-bootstrap";
+import {Container, Form, Nav, Navbar, NavDropdown, Row} from "react-bootstrap";
 import {Button, Icon, Menu, Segment, Sidebar} from "semantic-ui-react";
 import "aos/dist/aos.css";
 import AOS from "aos";
@@ -109,13 +109,23 @@ class HomePageComponent extends React.Component {
         localStorage.setItem("isDarkMode", darkMode === true ? "true" : "false");
     }
 
-    changeEntries(entry) {
-        const {entries, entryType} = this.state;
-        let newEntries = copyObject(entries);
+    changeEntries(newEntry) {
+        const {entries, entry, entryType} = this.state;
 
+        let newEntries = {};
+
+        // If editing an entry, then when copying list of previous entries skip the one being edited
+        // so that if it's title changes then it is overwritten. Otherwise, copy everything.
+        Object.keys(entries).forEach(v => {
+            if (v !== entry["title"])
+                newEntries[v] = entries[v];
+        })
+
+        // When creating a new entry if its title corresponds to an existing one, prevent it from being
+        // created by displaying an alert warning for the duplicate title.
         let duplicateEntryName = false;
         Object.keys(entries).forEach(entryTitle => {
-            if (entryTitle === entry["title"]) {
+            if (entryTitle === newEntry["title"] && entry["title"] !== newEntry["title"]) {
                 duplicateEntryName = true;
             }
         })
@@ -124,17 +134,17 @@ class HomePageComponent extends React.Component {
             alert("The title for this new entry already exists. Please input another title.")
         } else {
             let refactoredEntry = {};
-            refactoredEntry["title"] = entry["title"];
-            refactoredEntry["description"] = entry["description"];
-            refactoredEntry["isCode"] = entry["isCode"];
+            refactoredEntry["title"] = newEntry["title"];
+            refactoredEntry["description"] = newEntry["description"];
+            refactoredEntry["isCode"] = newEntry["isCode"];
 
             if (entryType === ConstantStrings.createStr) {
                 refactoredEntry["insertDate"] = this.getCurrentDate();
             } else {
-                refactoredEntry["insertDate"] = entry["insertDate"];
+                refactoredEntry["insertDate"] = newEntry["insertDate"];
                 refactoredEntry["updateDate"] = this.getCurrentDate();
             }
-            newEntries[entry["title"]] = refactoredEntry;
+            newEntries[newEntry["title"]] = refactoredEntry;
 
             this.setState({entries: newEntries}, this.closeCreateEditEntryPopup);
         }

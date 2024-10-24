@@ -86,6 +86,16 @@ a.carousel-control-prev:hover, a.carousel-control-next:hover {
     padding-right: 13%;
 }
 
+.form-control-plaintext {
+    padding: 0;
+    cursor: default !important;
+    resize: none;
+}
+
+.darkMode .description {
+    color: white;
+}
+
 /*Toggle button for showing sidebar menu*/
 button.ui.icon.button.sideMenuToggleBtn {
     position: absolute;

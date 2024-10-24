@@ -2,15 +2,25 @@ import {Form, Modal} from "react-bootstrap";
 import {ConstantStrings} from "../utilities/constants/ConstantStrings";
 import {Button} from "semantic-ui-react";
 import {Component} from "react";
-import {copyObject} from "../utilities/helpers/ObjectVariableFunctions";
+import {copyObject, isNotAnEmptyObject} from "../utilities/helpers/ObjectVariableFunctions";
 import {isNotEmptyString} from "../utilities/helpers/StringVariableValidators";
 
 class EntryComponent extends Component {
     constructor(props) {
         super(props);
 
+        let entry = {};
+        if (isNotAnEmptyObject(this.props["entry"])) {
+            Object.keys(this.props["entry"]).forEach(prop => {
+                if (prop === "isCode")
+                    entry["isCode"] = this.props["entry"][prop];
+                else
+                    entry[prop] = this.props["entry"][prop];
+            })
+        }
+
         this.state = {
-            entry: this.props["entry"] !== null ? this.props["entry"] : {}
+            entry
         }
 
         this.handleFormInput = this.handleFormInput.bind(this);
@@ -69,19 +79,19 @@ class EntryComponent extends Component {
                         />
                         <Form.Check name="isCode" type="checkbox" label="Format as code?"
                                     onChange={this.handleFormInput}
-                                    value={entry["isCode"]}
+                                    checked={entry["isCode"]}
                         />
                     </Form.Group>
                 </Form>
             </Modal.Body>
 
             <Modal.Footer>
-                <Button variant="secondary" onClick={this.props["closePopup"]}>
-                    Close
+                <Button color="green" onClick={this.validateFields}>
+                    Save Changes
                 </Button>
 
-                <Button variant="primary" onClick={this.validateFields}>
-                    Save Changes
+                <Button color="red" onClick={this.props["closePopup"]}>
+                    Cancel
                 </Button>
             </Modal.Footer>
         </Modal>

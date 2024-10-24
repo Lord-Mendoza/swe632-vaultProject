@@ -20,14 +20,15 @@ class EntryComponent extends Component {
         }
 
         this.state = {
-            entry
+            entry,
+            originalEntry: copyObject(entry)
         }
 
         this.handleFormInput = this.handleFormInput.bind(this);
         this.validateFields = this.validateFields.bind(this);
     }
 
-    handleFormInput(e){
+    handleFormInput(e) {
         const {entry} = this.state;
         const {name, value, checked} = e.target;
 
@@ -52,10 +53,10 @@ class EntryComponent extends Component {
     }
 
     render() {
-        const {entry} = this.state;
+        const {entry, originalEntry} = this.state;
 
         return <Modal show={true} onHide={this.props["closePopup"]}
-                      backdrop={"static"} keyboard={false}
+                      backdrop={"static"} className={"entryPopup"}
                       aria-labelledby="contained-modal-title-vcenter" centered>
             <Modal.Header closeButton>
                 <Modal.Title><b>{this.props["entryType"] === ConstantStrings.editStr ? "Edit Entry" : "Create New Entry"}</b></Modal.Title>
@@ -76,6 +77,7 @@ class EntryComponent extends Component {
                         <Form.Control name="description" as="textarea" placeholder="Description"
                                       onChange={this.handleFormInput}
                                       value={entry["description"]}
+                                      style={{minHeight: "150px"}}
                         />
                         <Form.Check name="isCode" type="checkbox" label="Format as code?"
                                     onChange={this.handleFormInput}
@@ -86,12 +88,19 @@ class EntryComponent extends Component {
             </Modal.Body>
 
             <Modal.Footer>
-                <Button color="green" onClick={this.validateFields}>
-                    Save Changes
+                <Button color="red" onClick={this.props["closePopup"]} style={{float: "left"}}>
+                    Cancel
                 </Button>
 
-                <Button color="red" onClick={this.props["closePopup"]}>
-                    Cancel
+                {
+                    this.props["entryType"] === ConstantStrings.editStr &&
+                    <Button onClick={() => this.setState({entry: originalEntry})}>
+                        Undo Changes
+                    </Button>
+                }
+
+                <Button color="green" onClick={this.validateFields}>
+                    Save Changes
                 </Button>
             </Modal.Footer>
         </Modal>

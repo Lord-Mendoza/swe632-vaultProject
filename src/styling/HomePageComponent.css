@@ -89,11 +89,15 @@ a.carousel-control-prev:hover, a.carousel-control-next:hover {
 .form-control-plaintext {
     padding: 0;
     cursor: default !important;
-    resize: none;
+    min-height: 100px;
 }
 
 .darkMode .description {
     color: white;
+}
+
+.fade.entryPopup.modal .modal-dialog.modal-dialog-centered {
+    max-width: 1000px;
 }
 
 /*Toggle button for showing sidebar menu*/

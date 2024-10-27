@@ -82,7 +82,7 @@ class HomePageComponent extends React.Component {
         // after adding the feature where clicking on the text field, a popup for edit entries appears.
         // there is a bug where when resizing the window, the onclick event to edit entires is also called.
         // This is to check if user is resizing or clicking.
-        // is used in "handleMouseDown => isResizeHandle"
+        // is used in handleMouseDown and handleClick
         this.isResizing = false;
     }
 
@@ -331,7 +331,8 @@ class HomePageComponent extends React.Component {
     // used to check if user is trying to click to edit, or click+hold to resize
     handleClick = () => {
         if (!this.isResizing) {
-            this.showCreateEditEntryPopup("Edit", this.state.entries[this.state.activeKey]);
+            this.showCreateEditEntryPopup(ConstantStrings.editStr, this.state.entries[this.state.activeKey]);
+            //showCreateEditEntryPopup(ConstantStrings.editStr, entries[activeKey])
         }
         this.isResizing = false; // Reset after each click
     }

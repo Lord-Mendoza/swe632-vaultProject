@@ -153,6 +153,11 @@ class HomePageComponent extends React.Component {
             newEntries[newEntry["title"]] = refactoredEntry;
 
             this.setState({ entries: newEntries }, this.closeCreateEditEntryPopup);
+
+
+            // If title (key) changed, make sure the entry is still active
+            this.changeActiveKey(new MouseEvent(''), {name: refactoredEntry.title});
+
         }
     }
 
@@ -249,6 +254,9 @@ class HomePageComponent extends React.Component {
 
         // Make the new entry active
         this.changeActiveKey(new MouseEvent(''), { name: newKey });
+
+        // Edit note after copy
+        this.showCreateEditEntryPopup(ConstantStrings.editStr, newEntries[newKey]);
 
         console.log(`Entry duplicated as ${newTitle}`);
     }

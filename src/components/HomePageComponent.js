@@ -6,6 +6,7 @@ import AOS from "aos";
 import Prism from "prismjs";
 import "../styling/prism.css";
 import { Switch, Tooltip } from "antd";
+import { BulbOutlined } from '@ant-design/icons';
 import ScrollToTop from "react-scroll-to-top";
 import { copyObject, isNotAnEmptyObject, isNotNullNorUndefined } from "../utilities/helpers/ObjectVariableFunctions";
 import "../styling/HomePageComponent.css";
@@ -576,9 +577,9 @@ class HomePageComponent extends React.Component {
                     closePopup={this.closeCreateEditEntryPopup} />}
 
                 {/* ChatBot Button */}
-                <button className="chatbot-toggle-button" onClick={this.toggleChatBot}>
-                    {isChatBotVisible ? 'Close' : 'Chat'}
-                </button>
+                <Button className="chatbot-toggle-button" color={'blue'} onClick={this.toggleChatBot}>
+                    {isChatBotVisible ? 'Close chat' : <><BulbOutlined /> Question about your notes? Click to chat.</>}
+                </Button>
 
                 {/* ChatBot Component, pass entries as props */}
                 {isChatBotVisible && (

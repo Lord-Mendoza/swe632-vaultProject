@@ -21,13 +21,14 @@ const AIChatBot: React.FC<AIChatBotProps> = ({ entries, darkMode }) => {
 
     // Prepare the prompt for the LLM
     const notesContent = Object.values(entries)
-      .map((entry: any) => {
-        const sections = entry.sections
-          .map((section: any) => `${section.sectionTitle}: ${section.content}`)
-          .join("\n");
-        return `${entry.title} (${entry.insertDate}):\n${sections}`;
-      })
-      .join("\n\n");
+    .map((entry: any) => {
+      const sections = entry.sections
+        ? entry.sections.map((section: any) => `${section.sectionTitle}: ${section.content}`).join("\n")
+        : entry.description; // If `sections` is undefined, fallback to description or other available content
+      return `${entry.title} (${entry.insertDate}):\n${sections}`;
+    })
+    .join("\n\n");
+  
 
     const prompt = `Here are the notes:\n${notesContent}\n\nUser Question: ${question}\n\nKeep responses short, do not include extra information\n`;
 

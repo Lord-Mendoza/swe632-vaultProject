@@ -38,11 +38,11 @@ const Help = ({show, hide}) => {
                         </li>
                         <li>Mistakenly deleted an entry? No problem. Simply open the <b>Recycle Bin</b> to recover it.
                         </li>
-                        <li>The <b>Manage Vault</b> option offers several capabilities for managing all your entries:
+                        <li>The <b>Manage VAULT</b> option offers several capabilities for managing all your entries:
                             <ul>
                                 <li>If you wish to export all of your entries to another browser or computer, use <b>Backup
-                                    Vault to File</b></li>
-                                <li>For importing all of your previous entries, use <b>Restore Vault from File</b></li>
+                                    VAULT to File</b></li>
+                                <li>For importing all of your previous entries, use <b>Restore VAULT from File</b></li>
                                 <li>To start all over, use <b>Delete All</b>. Note: You cannot recover the entries after
                                     this point.
                                 </li>

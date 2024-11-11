@@ -26,7 +26,26 @@ class EntryComponent extends Component {
 
         this.handleFormInput = this.handleFormInput.bind(this);
         this.validateFields = this.validateFields.bind(this);
+        this.showRefreshConfirmation = this.showRefreshConfirmation.bind(this);
     }
+
+    componentDidMount() {
+        // Add event listener when the modal is open
+        window.addEventListener('beforeunload', this.showRefreshConfirmation);
+    }
+
+    componentWillUnmount() {
+        // Remove event listener when the modal is closed
+        window.removeEventListener('beforeunload', this.showRefreshConfirmation);
+    }
+
+    showRefreshConfirmation(event) {
+        // Custom confirmation message (browsers may not display it directly)
+        const message = "";
+        event.returnValue = "Are you sure you want to refresh? Any unsaved data may be lost.";
+        return message; // For some browsers like older versions of Firefox
+    };
+
 
     handleFormInput(e) {
         const {entry} = this.state;
@@ -95,7 +114,10 @@ class EntryComponent extends Component {
 
                 {
                     this.props["entryType"] === ConstantStrings.editStr &&
-                    <Button onClick={() => this.setState({entry: originalEntry})}>
+                    <Button onClick={() => {
+                        if (window.confirm("Are you sure you want to revert your changes? This cannot be undone."))
+                            this.setState({entry: originalEntry})
+                    }}>
                         Undo Changes
                     </Button>
                 }

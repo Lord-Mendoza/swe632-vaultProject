@@ -234,7 +234,7 @@ class HomePageComponent extends React.Component {
         this.setState({showHelpPopup: false});
     }
 
-    handleDuplicateEntry = (key) => {
+    handleCopyEntry = (key) => {
         const {entries} = this.state;
 
         // Ensure the entry exists
@@ -475,9 +475,9 @@ class HomePageComponent extends React.Component {
                                 </Button>
                             </Tooltip>
 
-                            {/* Duplicate Button next to Delete */}
+                            {/* Copy Button next to Delete */}
                             <Tooltip placement="bottom" title={'Clone'} arrow={true}>
-                                <Button icon onClick={() => this.handleDuplicateEntry(activeKey)}>
+                                <Button icon onClick={() => this.handleCopyEntry(activeKey)}>
                                     <Icon name="copy"/>
                                 </Button>
                             </Tooltip>

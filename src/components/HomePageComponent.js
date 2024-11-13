@@ -465,7 +465,7 @@ class HomePageComponent extends React.Component {
                             )}
                         </Row>
 
-                        {/* Show Edit/Save and Delete */}
+                        {/* Show Edit, Copy, and Delete */}
                         <div style={{paddingTop: "10px"}}>
                             {/* Edit Button */}
                             <Tooltip placement="bottom" title={'Edit'} arrow={true}>

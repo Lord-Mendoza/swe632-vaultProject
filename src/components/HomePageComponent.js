@@ -73,7 +73,7 @@ class HomePageComponent extends React.Component {
     this.changeEntries = this.changeEntries.bind(this);
     this.copyToClipboard = this.copyToClipboard.bind(this);
     this.setDarkModeToLocalStorage = this.setDarkModeToLocalStorage.bind(this);
-    this.changeActiveKey = (e, { name }) => this.setState({ activeKey: name });
+    this.changeActiveKey = (e, { name }) => {this.toggleSidebar(false); this.setState({ activeKey: name });};
     this.getCurrentDate = () => {
       return Moment(new Date()).format("MMMM Do YYYY, h:mm:ss a");
     };

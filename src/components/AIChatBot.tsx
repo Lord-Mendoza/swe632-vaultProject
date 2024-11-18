@@ -7,17 +7,28 @@ interface AIChatBotProps {
   darkMode: boolean;
 }
 
+const Message = ({ text, sender }) => {
+  return (
+      <div className={`message ${sender}`}>
+        <div className="message-bubble">{text}</div>
+      </div>
+  );
+};
+
+// updated chat-like UI AI-assisted
 const AIChatBot: React.FC<AIChatBotProps> = ({ entries, darkMode }) => {
+  const [messages, setMessages] = useState([{ text: 'Hi there! Ask me a question about your notes.', sender: 'bot' }]); // Keeps track of the conversation
   const [question, setQuestion] = useState<string>("");
-  const [response, setResponse] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
-  // Function to handle user question and get response from LLM
   const handleAskQuestion = async () => {
-    if (!question) return;
+    if (!question.trim()) return;
+
+    // Add user's message to the chat
+    const userMessage = { text: question, sender: 'user' };
+    setMessages([...messages, userMessage]);
 
     setLoading(true);
-    setResponse(""); // Clear previous response
 
     // Prepare the prompt for the LLM
     const notesContent = Object.values(entries)
@@ -31,6 +42,8 @@ const AIChatBot: React.FC<AIChatBotProps> = ({ entries, darkMode }) => {
   
 
     const prompt = `Here are the notes:\n${notesContent}\n\nUser Question: ${question}\n\nKeep responses short, do not include extra information\n`;
+
+    let result = "";
 
     try {
       const responseStream = await fetch(
@@ -49,7 +62,6 @@ const AIChatBot: React.FC<AIChatBotProps> = ({ entries, darkMode }) => {
 
       const reader = responseStream.body?.getReader();
       const decoder = new TextDecoder();
-      let result = "";
 
       if (reader) {
         while (true) {
@@ -66,7 +78,6 @@ const AIChatBot: React.FC<AIChatBotProps> = ({ entries, darkMode }) => {
               const json = JSON.parse(message);
               if (json.response) {
                 result += json.response;
-                setResponse(result);
               }
             } catch (e) {
               console.error("Error parsing JSON:", e);
@@ -74,34 +85,39 @@ const AIChatBot: React.FC<AIChatBotProps> = ({ entries, darkMode }) => {
           }
         }
       } else {
-        setResponse("Error: No response stream available.");
+        result = "Error: No response stream available.";
       }
     } catch (error) {
-      setResponse("Error occurred while fetching the response.");
+      result = "Error occurred while fetching the response.";
     } finally {
+      setMessages((prev) => [...prev, { text: result, sender: 'bot' }]); // Append bot's reply
+      setQuestion(''); // Clear input field
       setLoading(false);
     }
   };
 
   return (
     <div className={`container ${darkMode ? "dark-mode" : ""}`}>
-      <h1 className="centered-heading">AI ChatBot</h1>
-      <div className="form-group">
-        <label htmlFor="question">Ask a question about your notes:</label>
+      <div className="centered-heading">
+        <h1>AI ChatBot</h1>
+      </div>
+      <div className="chatbot-messages">
+        {messages.map((msg, index) => (
+          <Message key={index} text={msg.text} sender={msg.sender}/>
+        ))}
+      </div>
+      <div className="chatbot-input">
         <textarea
           id="question"
           rows={4}
           cols={50}
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
+          placeholder="Type question here..."
         />
-      </div>
-      <button onClick={handleAskQuestion} disabled={loading}>
-        {loading ? "Loading..." : "Ask Question"}
-      </button>
-      <div className="response-container">
-        <h2>Response:</h2>
-        <p>{response}</p>
+        <button onClick={handleAskQuestion} disabled={loading}>
+          {loading ? "Loading..." : "Ask"}
+        </button>
       </div>
     </div>
   );

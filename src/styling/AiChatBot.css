@@ -10,6 +10,7 @@
   border-radius: 10px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   z-index: 1000;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -18,32 +19,21 @@
   /* Smooth transition for height change */
 }
 
-.response-container {
+.chatbot-messages {
   flex-grow: 1;
   margin: 10px;
   overflow-y: auto;
-  word-wrap: break-word;
-  /* Ensure long text wraps within the container */
-}
-
-.chatbot-container h1 {
-  text-align: center;
-  font-size: 18px;
-  margin-top: 10px;
-}
-
-.chatbot-container textarea {
-  width: 90%;
-  margin: 10px auto;
-}
-
-.chatbot-container button {
-  margin: 10px;
-  align-self: center;
 }
 
 .centered-heading {
   text-align: center;
+  background-color: white;
+  position: sticky;
+  top: 0;
+  width: 100%;
+  padding: 10px;
+  z-index: 10; /* Ensures it overlaps the messages when scrolling */
+  border-bottom: 1px solid #ddd; /* Optional: a subtle border below */
 }
 
 .container {
@@ -54,13 +44,63 @@
   padding: 20px;
 }
 
-.form-group {
+.chatbot-input {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 20px;
+  background-color: white;
+  border-top: 1px solid #ddd;
+  position: sticky;
+  bottom: 0px;
+  z-index: 10;
 }
 
-label {
-  margin-bottom: 8px;
+.chatbot-input input {
+  flex: 1;
+  border: none;
+  padding: 10px;
+  border-radius: 0;
+  outline: none;
+}
+
+.chatbot-input button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.chatbot-input button:hover {
+  background-color: #0056b3;
+}
+
+.message {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.message.user {
+  justify-content: flex-end;
+}
+
+.message.bot {
+  justify-content: flex-start;
+}
+
+.message-bubble {
+  max-width: 70%;
+  padding: 10px 15px;
+  border-radius: 20px;
+  font-size: 14px;
+  line-height: 1.4;
+  word-wrap: break-word;
+}
+
+.message.user .message-bubble {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.message.bot .message-bubble {
+  background-color: #eaeaea;
+  color: #333;
 }

@@ -412,7 +412,7 @@ class HomePageComponent extends React.Component {
 
     // Update lastScrollY
     this.setState({ lastScrollY: currentScrollY });
-  };
+  }
 
   showSuccessToast = () => {
     this.setState({ showSuccess: true });
@@ -521,11 +521,12 @@ class HomePageComponent extends React.Component {
       content = (
         <Segment raised inverted={darkMode} style={{ marginTop: "10px" }}>
           <Container fluid>
+            {/** The title, duh */}
             <Row
               noGutters
               style={{ paddingBottom: ".5em", paddingLeft: "1em" }}
             >
-              <h4>{title}</h4>
+              <h4 style={{ fontSize: "1.50em" }}>{title}</h4>
             </Row>
 
             {/* Shows Date on view*/}

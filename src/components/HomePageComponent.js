@@ -32,6 +32,7 @@ import FileUploadPopup from "./FileUploadPopup.js";
 import SearchBox from "./SearchBox";
 import Moment from "moment";
 import Help from "./Help";
+import "../styling/NoteListRondedCorners.css";
 
 import { Toast, ToastContainer } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -73,7 +74,10 @@ class HomePageComponent extends React.Component {
     this.changeEntries = this.changeEntries.bind(this);
     this.copyToClipboard = this.copyToClipboard.bind(this);
     this.setDarkModeToLocalStorage = this.setDarkModeToLocalStorage.bind(this);
-    this.changeActiveKey = (e, { name }) => {this.toggleSidebar(false); this.setState({ activeKey: name });};
+    this.changeActiveKey = (e, { name }) => {
+      this.toggleSidebar(false);
+      this.setState({ activeKey: name });
+    };
     this.getCurrentDate = () => {
       return Moment(new Date()).format("MMMM Do YYYY, h:mm:ss a");
     };
@@ -653,6 +657,7 @@ class HomePageComponent extends React.Component {
             </Nav>
           </Navbar.Collapse>
 
+          {/* This is the Dark Mode Toggle in the top right */}
           <div style={{ padding: ".5rem 1rem" }}>
             <span className={"darkModeLabel"}> Dark Mode: &nbsp;</span>
             <Switch
@@ -670,6 +675,8 @@ class HomePageComponent extends React.Component {
             />
           </div>
         </Navbar>
+
+        {/*This is the SideBar Notes List */}
         <div
           style={{ marginTop: "-10px", paddingBottom: "15px", ...style }}
           className={darkMode === true ? "darkMode" : ""}
@@ -690,7 +697,28 @@ class HomePageComponent extends React.Component {
                 visible={sidebarVisibility}
                 className={sidebarClassName}
               >
-                {menuOptions}
+                {/**was  {menuOptions} */}
+                {/** Change to Rounded Corners */}
+                {Object.keys(entries)
+                  .sort((a, b) => {
+                    const dateA = entries[a]["insertDate"];
+                    const dateB = entries[b]["insertDate"];
+
+                    if (!dateA && !dateB) return 0;
+                    if (!dateA) return -1;
+                    if (!dateB) return 1;
+                    return Date.parse(dateB) - Date.parse(dateA); // Sort by most recent
+                  })
+                  .map((key, index) => (
+                    <div
+                      key={index}
+                      className={`note-entry ${darkMode ? "darkMode" : ""}`}
+                      onClick={() => this.changeActiveKey(null, { name: key })}
+                    >
+                      <h4>{entries[key].title}</h4>
+                      <p>{entries[key].insertDate}</p>
+                    </div>
+                  ))}
               </Sidebar>
 
               <Sidebar.Pusher

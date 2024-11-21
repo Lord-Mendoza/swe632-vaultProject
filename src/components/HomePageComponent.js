@@ -531,20 +531,24 @@ class HomePageComponent extends React.Component {
 
             {/* Shows Date on view*/}
             {!isEditing && isNotNullNorUndefined(insertDate) && (
-              <Row noGutters style={{ paddingLeft: "1em" }}>
-                <h6>
-                  Last Updated:{" "}
-                  {isNotNullNorUndefined(updateDate) ? updateDate : insertDate}
-                </h6>
+              <Row
+                noGutters
+                style={{ paddingLeft: "3em", fontSize: "0.750em" }}
+              >
+                Last Updated:
+                {isNotNullNorUndefined(updateDate) ? updateDate : insertDate}
               </Row>
             )}
-
             {!isEditing && isNotNullNorUndefined(insertDate) && (
               <Row
                 noGutters
-                style={{ paddingBottom: ".5em", paddingLeft: "1em" }}
+                style={{
+                  paddingBottom: ".5em",
+                  paddingLeft: "3em",
+                  fontSize: "0.750em",
+                }}
               >
-                <h6>Added: {insertDate}</h6>
+                Added: {insertDate}
               </Row>
             )}
 

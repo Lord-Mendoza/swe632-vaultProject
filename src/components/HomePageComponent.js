@@ -68,6 +68,9 @@ class HomePageComponent extends React.Component {
       showRecycleBinModal: false,
       showHelpPopup: false,
       showUploadPopup: false,
+      // Used for hiding Nav Bar when scrolling down
+      isNavbarVisible: true,
+      lastScrollY: 0,
     };
 
     this.handleSelection = this.handleSelection.bind(this);
@@ -106,15 +109,22 @@ class HomePageComponent extends React.Component {
     // This is to check if user is resizing or clicking.
     // is used in handleMouseDown and handleClick
     this.isResizing = false;
+
+    //Used to hide navbar when scrolling down
+    this.handleScroll = this.handleScroll.bind(this);
   }
 
   componentDidMount() {
     Prism.highlightAll();
+    //Used for up down arrow key navigation
     window.addEventListener("keydown", this.handleKeyDown);
+    // used to hide navbar when scrolling down
+    window.addEventListener("scroll", this.handleScroll);
   }
 
   componentWillUnmount() {
     window.removeEventListener("keydown", this.handleKeyDown);
+    window.removeEventListener("scroll", this.handleScroll);
   }
 
   handleSelection(e) {
@@ -388,6 +398,22 @@ class HomePageComponent extends React.Component {
     this.isResizing = false; // Reset after each click
   };
 
+  handleScroll() {
+    const currentScrollY = window.scrollY;
+
+    // Determine scrolling direction
+    if (currentScrollY > this.state.lastScrollY && currentScrollY > 50) {
+      // Scrolling down
+      this.setState({ isNavbarVisible: false });
+    } else {
+      // Scrolling up
+      this.setState({ isNavbarVisible: true });
+    }
+
+    // Update lastScrollY
+    this.setState({ lastScrollY: currentScrollY });
+  };
+
   showSuccessToast = () => {
     this.setState({ showSuccess: true });
     setTimeout(() => this.setState({ showSuccess: false }), 1500);
@@ -408,6 +434,7 @@ class HomePageComponent extends React.Component {
       showHelpPopup,
       isChatBotVisible,
       showUploadPopup,
+      isNavbarVisible,
     } = this.state;
 
     AOS.init();
@@ -607,7 +634,13 @@ class HomePageComponent extends React.Component {
           expand="lg"
           bg="dark"
           variant="dark"
-          style={{ padding: "10px" }}
+          style={{
+            padding: "10px",
+            transition: "top 0.3s",
+            top: isNavbarVisible ? "0" : "-70px",
+            position: "sticky",
+            zIndex: 1000,
+          }}
         >
           <Navbar.Brand>
             <img

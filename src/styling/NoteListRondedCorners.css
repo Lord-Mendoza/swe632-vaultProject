@@ -1,11 +1,12 @@
 .note-entry {
-    border-radius: 10px; /* Rounds the corners */
-    margin: 8px 0; /* Adds spacing between notes */
-    padding: 12px; /* Adds inner spacing for content */
-    background-color: #f4f4f4; /* Light background for contrast */
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Adds a subtle shadow */
-    transition: transform 0.2s, box-shadow 0.2s; /* Smooth interaction effects */
+    background-color: var(--card-bg, #fff); /* Light background color */
+    border-radius: 10px; /* Keep rounded corners */
+    padding: 10px; /* Add some internal spacing */
+    margin: 5px 10px; /* Add space around the cards */
+    max-width: calc(100% - 20px); /* Ensure it doesn't exceed the sidebar's width */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4); /* Optional shadow for depth */
   }
+  
   
   .note-entry:hover {
     transform: scale(1.02); /* Slight zoom on hover */

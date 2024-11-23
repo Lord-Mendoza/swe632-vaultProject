@@ -1,0 +1,13 @@
+.form-control {
+    border-width: 1px;
+    border-color: rgb(68, 79, 108);
+}
+
+.form-check-input {
+    border-width: 2px;
+    border-color: rgb(68, 79, 108);
+}
+
+.form-label, .form-check-label {
+    font-weight: bold;
+}

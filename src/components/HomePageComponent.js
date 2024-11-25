@@ -8,8 +8,8 @@ import "aos/dist/aos.css";
 import AOS from "aos";
 import Prism from "prismjs";
 import "../styling/prism.css";
-import {Switch, Tooltip} from "antd";
-import {BulbOutlined} from "@ant-design/icons";
+import {Button as AntButton, Col, DatePicker, Divider, Popover, Select, Switch, Tooltip} from "antd";
+import {BulbOutlined, DownOutlined} from "@ant-design/icons";
 import ScrollToTop from "react-scroll-to-top";
 import {
     copyObject,
@@ -67,6 +67,10 @@ class HomePageComponent extends React.Component {
             // Used for hiding Nav Bar when scrolling down
             isNavbarVisible: true,
             lastScrollY: 0,
+            filterVisible: false,
+            filterStartDate: null,
+            filterEndDate: null,
+            sortMode: 'time-desc',
         };
 
         this.handleSelection = this.handleSelection.bind(this);
@@ -415,6 +419,13 @@ class HomePageComponent extends React.Component {
         setTimeout(() => this.setState({showSuccess: false}), 1500);
     };
 
+    parseDate(dateString) {
+        // Remove any day suffix like "st", "nd", "rd", "th"
+        const cleanedDate = dateString.replace(/\b(\d+)(st|nd|rd|th)\b/g, '$1');
+        // Return the parsed Date object
+        return new Date(cleanedDate);
+    }
+
     render() {
         const {
             entries,
@@ -481,8 +492,8 @@ class HomePageComponent extends React.Component {
                     else if (b["insertDate"] === null || b["insertDate"] === undefined)
                         return 1;
                     else {
-                        const dateA = Date.parse(a["insertDate"]);
-                        const dateB = Date.parse(b["insertDate"]);
+                        const dateA = this.parseDate(a["insertDate"]);
+                        const dateB = this.parseDate(b["insertDate"]);
 
                         if (dateA === dateB) return 0;
                         return dateA < dateB ? 1 : -1;
@@ -740,17 +751,125 @@ class HomePageComponent extends React.Component {
                                 visible={sidebarVisibility}
                                 className={sidebarClassName}
                             >
+                                <Row style={{ marginTop: '10px', justifyContent: 'space-evenly' }}>
+                                    <Col span={2}>
+                                        <Popover
+                                            placement="bottom"
+                                            content={
+                                                <DatePicker.RangePicker
+                                                    allowEmpty={[true, true]}
+                                                    onChange={(dates) => {
+                                                        if (dates) {
+                                                            this.setState({
+                                                                filterStartDate: dates[0]["$d"],
+                                                                filterEndDate: dates[1]["$d"]
+                                                            });
+                                                        } else {
+                                                            this.setState({
+                                                                filterStartDate: null,
+                                                                filterEndDate: null
+                                                            });
+                                                        }
+                                                    }
+                                                } />
+                                            }
+                                            title="Filter by Date"
+                                            trigger="click"
+                                            open={this.state.filterVisible}
+                                            onOpenChange={() => this.setState((prevState) => ({ filterVisible: !prevState.filterVisible }))}
+                                        >
+                                            <AntButton
+                                                style={{
+                                                    color: (this.state.filterStartDate || this.state.filterEndDate) ? 'white' : 'lightgray',
+                                                    backgroundColor: (this.state.filterStartDate || this.state.filterEndDate) ? 'green' : ''
+                                                }}
+                                            >
+                                                Filter <DownOutlined/>
+                                            </AntButton>
+                                        </Popover>
+                                    </Col>
+                                    <Col span={2}>
+                                        <Select
+                                            dropdownStyle={{ width: 220 }}
+                                            onChange={(value) => this.setState({ sortMode: value })}
+                                            options={[
+                                                {
+                                                    value: 'time-asc',
+                                                    label: 'Date added (ascending)',
+                                                },
+                                                {
+                                                    value: 'time-desc',
+                                                    label: 'Date added (descending)',
+                                                },
+                                                {
+                                                    value: 'az-asc',
+                                                    label: 'Title (ascending)',
+                                                },
+                                                {
+                                                    value: 'az-desc',
+                                                    label: 'Title (descending)',
+                                                },
+                                            ]}
+                                            placeholder="Sort"
+                                        />
+                                    </Col>
+                                </Row>
+                                <Divider style={{ margin: '10px 0' }} />
+
                                 {/**was  {menuOptions} */}
                                 {/** Change to Rounded Corners */}
                                 {Object.keys(entries)
-                                    .sort((a, b) => {
-                                        const dateA = entries[a]["insertDate"];
-                                        const dateB = entries[b]["insertDate"];
+                                    .filter((key) => {
+                                        if (entries[key]["insertDate"]) {
+                                            const date = this.parseDate(entries[key]["insertDate"]);
 
-                                        if (!dateA && !dateB) return 0;
-                                        if (!dateA) return -1;
-                                        if (!dateB) return 1;
-                                        return Date.parse(dateB) - Date.parse(dateA); // Sort by most recent
+                                            if (this.state.filterStartDate && this.state.filterEndDate) {
+                                                return this.state.filterStartDate <= date && date <= this.state.filterEndDate;
+                                            } else if (this.state.filterStartDate) {
+                                                return this.state.filterStartDate <= date;
+                                            } else if (this.state.filterEndDate) {
+                                                return date <= this.state.filterEndDate;
+                                            }
+                                        }
+
+                                        return true;
+                                    })
+                                    .sort((a, b) => {
+                                        const sortMode = this.state.sortMode;
+
+                                        if (sortMode.startsWith("time")) {
+                                            const dateA = entries[a]["insertDate"];
+                                            const dateB = entries[b]["insertDate"];
+
+                                            if (sortMode === "time-desc") {
+                                                if (!dateA && !dateB) return 0;
+                                                if (!dateA) return -1;
+                                                if (!dateB) return 1;
+                                                return this.parseDate(dateB) - this.parseDate(dateA); // Sort by most recent
+                                            } else if (sortMode === "time-asc") {
+                                                if (!dateA && !dateB) return 0;
+                                                if (!dateA) return 1;
+                                                if (!dateB) return -1;
+                                                return this.parseDate(dateA) - this.parseDate(dateB); // Sort by least recent
+                                            }
+                                        } else if (sortMode.startsWith("az")) {
+                                            const titleA = entries[a]["title"];
+                                            const titleB = entries[b]["title"];
+
+                                            if (sortMode === "az-desc") {
+                                                if (!titleA && !titleB) return 0;
+                                                if (!titleA) return -1;
+                                                if (!titleB) return 1;
+                                                return titleB.localeCompare(titleA); // Sort by Z-A
+                                            } else if (sortMode === "az-asc") {
+                                                if (!titleA && !titleB) return 0;
+                                                if (!titleA) return 1;
+                                                if (!titleB) return -1;
+                                                return titleA.localeCompare(titleB); // Sort by A-Z
+                                            }
+                                        }
+
+                                        return 0;
                                     })
                                     .map((key, index) => (
                                         <div

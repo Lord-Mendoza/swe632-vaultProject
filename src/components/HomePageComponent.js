@@ -221,7 +221,7 @@ class HomePageComponent extends React.Component {
                 Object.entries(trash).filter(([key]) => key !== entryKey)
             ),
             entries: {...entries, [entryKey]: trash[entryKey]},
-        });
+        }, this.saveEntriesToLocalStorage);
     };
 
     // Handle delete and move to recycle
@@ -333,7 +333,7 @@ class HomePageComponent extends React.Component {
     };
 
     handleRestoreVault = (data) => {
-        this.setState({entries: data});
+        this.setState({entries: data}, this.saveEntriesToLocalStorage);
         console.log("Vault restored from file");
     };
 

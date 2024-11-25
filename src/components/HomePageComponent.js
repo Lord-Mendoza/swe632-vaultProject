@@ -71,6 +71,7 @@ class HomePageComponent extends React.Component {
             filterStartDate: null,
             filterEndDate: null,
             sortMode: 'time-desc',
+            numEntriesVisible: 0,
         };
 
         this.handleSelection = this.handleSelection.bind(this);
@@ -420,6 +421,10 @@ class HomePageComponent extends React.Component {
     };
 
     parseDate(dateString) {
+        if (!dateString) {
+            return undefined;
+        }
+
         // Remove any day suffix like "st", "nd", "rd", "th"
         const cleanedDate = dateString.replace(/\b(\d+)(st|nd|rd|th)\b/g, '$1');
         // Return the parsed Date object
@@ -632,6 +637,10 @@ class HomePageComponent extends React.Component {
                         <h2>
                             Select an entry on the left to start viewing its information here.
                         </h2>
+                        <h3>
+                            You have {Object.keys(entries).length} notes ({this.state.numEntriesVisible} are visible).
+                        </h3>
+                        {Object.values(entries).length !== 0 && <h3>VAULT User since {Object.values(entries).sort((a, b) => this.parseDate(a["insertDate"]) - this.parseDate(b["insertDate"]))[0]["insertDate"]}.</h3>}
                     </div>
                 </Segment>
             );
@@ -872,6 +881,10 @@ class HomePageComponent extends React.Component {
                                         return 0;
                                     })
                                     .map((key, index, arr) => {
+                                        if (this.state.numEntriesVisible !== arr.length) {
+                                            this.setState({ numEntriesVisible: arr.length });
+                                        }
+
                                         let separator = <></>;
 
                                         if (this.state.sortMode === "time-desc" &&

@@ -871,16 +871,47 @@ class HomePageComponent extends React.Component {
 
                                         return 0;
                                     })
-                                    .map((key, index) => (
-                                        <div
-                                            key={index}
-                                            className={`note-entry ${darkMode ? "darkMode" : ""}`}
-                                            onClick={() => this.changeActiveKey(null, {name: key})}
-                                        >
-                                            <h4>{entries[key].title}</h4>
-                                            <p>{entries[key].insertDate}</p>
-                                        </div>
-                                    ))}
+                                    .map((key, index, arr) => {
+                                        let separator = <></>;
+
+                                        if (this.state.sortMode === "time-desc" &&
+                                            entries[key]["insertDate"] &&
+                                            index+1 < arr.length &&
+                                            entries[arr[index+1]]["insertDate"]
+                                        ) {
+                                            const thisDate = new Date(this.parseDate(entries[key]["insertDate"]).setHours(0, 0, 0, 0));
+                                            const prevDate = new Date(this.parseDate(entries[arr[index+1]]["insertDate"]).setHours(0, 0, 0, 0));
+
+                                            const now = new Date();
+                                            const today = new Date(new Date().setHours(0, 0, 0, 0));
+                                            const yesterday = new Date(new Date(today - 86400000).setHours(0, 0, 0, 0));
+                                            const twoDaysAgo = new Date(new Date(today - 2 * 86400000).setHours(0, 0, 0, 0));
+
+                                            if (prevDate <= yesterday && today <= thisDate && thisDate <= now) {
+                                                separator = <Divider>Yesterday</Divider>
+                                            } else if (prevDate <= twoDaysAgo && twoDaysAgo <= thisDate && thisDate <= yesterday) {
+                                                separator = <Divider>This Week</Divider>
+                                            } else if (prevDate.getMonth() < thisDate.getMonth()) {
+                                                separator = <Divider>{prevDate.toLocaleString("default", { month: "long" })}</Divider>
+                                            } else if (prevDate.getFullYear() < thisDate.getFullYear()) {
+                                                separator = <Divider>{prevDate.toLocaleString("default", { year: "numeric" })}</Divider>
+                                            }
+                                        }
+
+                                        return (
+                                            <>
+                                                <div
+                                                    key={index}
+                                                    className={`note-entry ${darkMode ? "darkMode" : ""}`}
+                                                    onClick={() => this.changeActiveKey(null, {name: key})}
+                                                >
+                                                    <h4>{entries[key].title}</h4>
+                                                    <p>{entries[key].insertDate}</p>
+                                                </div>
+                                                {separator}
+                                            </>
+                                        );
+                                    })}
                             </Sidebar>
 
                             <Sidebar.Pusher

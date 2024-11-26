@@ -1,5 +1,5 @@
 import _ from "lodash";
-import {isEmptyString, isNotEmptyString} from "./StringVariableValidators";
+import {isNotEmptyString} from "./StringVariableValidators";
 
 export const isNotAnEmptyObject = (val) => {
     return val !== undefined && val !== null
